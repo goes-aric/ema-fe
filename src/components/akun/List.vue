@@ -39,7 +39,7 @@
             <tr>
               <th scope="col" class="text-left">Kode Akun</th>
               <th scope="col" class="text-left">Nama Akun</th>
-              <th scope="col" class="text-left">Akun Induk</th>
+              <th scope="col" class="text-left">Akun Utama</th>
               <th scope="col" class="text-left">Tipe</th>
               <th scope="col" class="text-center">Aksi</th>
             </tr>
@@ -50,7 +50,7 @@
             <tr v-for="(akun, index) in akun" :key="akun.id">
               <td class="text-left">{{ akun.kode_akun }}</td>
               <td class="text-left">{{ akun.nama_akun }}</td>
-              <td class="text-left">{{ akun.induk ? akun.akun_utama : '' }} - {{ akun.induk ? akun.induk.nama_akun : '' }}</td>
+              <td class="text-left">{{ akun.induk ? akun.akun_utama : '' }} {{ akun.induk ? akun.induk.nama_akun : '' }}</td>
               <td class="text-left">{{ akun.tipe_akun }}</td>
               <td class="text-center">
                 <div class="flex item-center justify-center">
@@ -82,16 +82,23 @@
     </div>
 
     <!-- Modal Dialog -->
-    <modal :show="showModal" @close="showModal = false" addClass="modal-sm" modalOrientation="flex items-center justify-center">
+    <modal :show="showModal" @close="showModal = false" addClass="modal-sm" modalOrientation="pt-20 md:pt-6">
       <template v-slot:header><h3>{{ modalTitle }}</h3></template>
       <template v-slot:body>
         <Form id="modalForm" @submit="saveConfirmDialog()">
           <div class="flex w-full gap-2">
-            <div class="w-2/6 mb-4">
+            <div class="w-2/6">
               <label for="kode_akun" class="label-control">Kode Akun <span class="text-red-600">*</span></label>
-              <Field id="kode_akun" name="kode_akun" type="text" ref="kodeAkun" v-model="kodeAkun" label="Kode Akun" rules="required" class="form-control" v-on:keypress="onlyNumber()" :readonly="isEdit" autocomplete="off" />
-              <ErrorMessage name="kode_akun" class="capitalize text-sm text-red-600" />
-              <div v-if="error.kode_akun" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun[0] }}</span></div>                
+              <div class="flex w-full gap2">
+                <div class="w-1/5 mb-4">
+                  <Field id="tipe" name="tipe" type="text" v-model="tipe" label="Tipe" maxlength="255" class="mt-2.5" disabled />
+                </div>
+                <div class="w-4/5 mb-4">
+                  <Field id="kode_akun" name="kode_akun" type="text" ref="kodeAkun" v-model="kodeAkun" label="Kode Akun" rules="required" class="form-control" :readonly="isEdit" autocomplete="off" />
+                  <ErrorMessage name="kode_akun" class="capitalize text-sm text-red-600" />
+                  <div v-if="error.kode_akun" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun[0] }}</span></div>                
+                </div>
+              </div>
             </div>
             <div class="w-4/6 mb-4">
               <label for="nama_akun" class="label-control">Nama Akun <span class="text-red-600">*</span></label>
@@ -120,7 +127,7 @@
           </div>
           <div class="w-full mb-4">
             <label for="tipe_akun" class="label-control">Tipe Akun <span class="text-red-600">*</span></label>
-            <VueMultiselect id="tipe_akun" name="tipe_akun" ref="tipe_akun" v-model="tipeAkun" :options="tipeAkunOptions" :showLabels="false" placeholder="Pilih Tipe Akun">
+            <VueMultiselect id="tipe_akun" name="tipe_akun" ref="tipeAkun" v-model="tipeAkun" track-by="name" label="name" :options="tipeAkunOptions" :showLabels="false" placeholder="Pilih Tipe Akun">
               <template v-slot:caret>
                 <div>
                   <div class="multiselect__select">
@@ -240,12 +247,15 @@ export default {
       showModal: false,      
       isEdit: false,
       akunId: '',
+      tipe: '',
       kodeAkun: '',
       namaAkun: '',
       akunUtama: '',
       akunUtamaOptions: [],
       tipeAkun: '',
-      tipeAkunOptions: ['AKTIVA', 'KEWAJIBAN', 'EKUITAS', 'PENDAPATAN', 'BEBAN'],      
+      tipeAkunOptions: [
+        { id: '1-', name: 'AKTIVA' }, { id: '2-', name: 'KEWAJIBAN' }, { id: '3-', name: 'EKUITAS' }, { id: '4-', name: 'PENDAPATAN' }, { id: '5-', name: 'BEBAN' }
+      ],      
       isLoading: false,
     }
   },
@@ -380,11 +390,13 @@ export default {
         if (response.data.status === 'success') {
           this.isLoading = false
           this.record = response.data.data
+          const kodeAkun = this.record.kode_akun.split("-")
 
-          this.kodeAkun = this.record.kode_akun
+          this.tipe = kodeAkun[0] + '-'
+          this.kodeAkun = kodeAkun[1]
           this.namaAkun = this.record.nama_akun
           this.akunUtama = this.record.induk ? { id: this.record.akun_utama, name: this.record.induk.nama_akun } : ''
-          this.tipeAkun = this.record.tipe_akun
+          this.tipeAkun = { id: this.record.tipe_akun_id, name: this.record.tipe_akun }
         } else {
           this.isLoading = false
 
@@ -400,10 +412,10 @@ export default {
       try {
         this.isLoading = true       
         const payload = {
-          kode_akun: this.kodeAkun,
+          kode_akun: this.tipe + '' + this.kodeAkun,
           nama_akun: this.namaAkun,
           akun_utama: this.akunUtama ? this.akunUtama.id : null,
-          tipe_akun: this.tipeAkun                 
+          tipe_akun: this.tipeAkun ? this.tipeAkun.name : null
         }
         let response = ''
         if (this.isEdit) {
@@ -433,6 +445,7 @@ export default {
           this.toast.success(response.data.message)
 
           /* RELOAD DATA */
+          this.fetchAkunUtama()
           this.fetchData()
         } else {
           /* SET LOADING STATE IS FALSE */
@@ -563,6 +576,13 @@ export default {
     document.removeEventListener("keydown", this.searchFocus);
   },
   watch: {
+    tipeAkun: function() {
+      if (this.tipeAkun) {
+        this.tipe = this.tipeAkun.id
+      } else {
+        this.tipe = null
+      }
+    },
     '$route.query.take': {
       handler: function(take) {
         if (take) {
