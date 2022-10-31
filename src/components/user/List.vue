@@ -86,7 +86,7 @@
     </div>
 
     <!-- Modal Dialog -->
-    <modal :show="showModal" @close="showModal = false" addClass="modal-sm" modalOrientation="flex items-center justify-center">
+    <modal :show="showModal" @close="showModal = false" addClass="modal-sm" modalOrientation="py-20 md:py-6">
       <template v-slot:header><h3>{{ modalTitle }}</h3></template>
       <template v-slot:body>
         <Form id="modalForm" @submit="saveConfirmDialog()">
@@ -110,23 +110,31 @@
             <ErrorMessage name="alamat" class="capitalize text-sm text-red-600" />
             <div v-if="error.alamat" class="capitalize text-sm text-red-600"><span>{{ error.alamat[0] }}</span></div>        
           </div>  
-          <div class="w-full mb-2">
-            <label for="hak_akses" class="label-control">Hak Akses <span class="text-red-600">*</span></label>
-            <VueMultiselect id="hak_akses" name="hak_akses" ref="hak_akses" v-model="hakAkses" :options="hakAksesOptions" :showLabels="false" placeholder="Pilih Hak Akses">
-              <template v-slot:caret>
-                <div>
-                  <div class="multiselect__select">
-                    <span>
-                      <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                        <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                      </svg>
-                    </span>
+          <div class="flex w-full gap-4">
+            <div class="w-1/2 mb-2">
+              <label for="hak_akses" class="label-control">Hak Akses <span class="text-red-600">*</span></label>
+              <VueMultiselect id="hak_akses" name="hak_akses" ref="hak_akses" v-model="hakAkses" :options="hakAksesOptions" :showLabels="false" placeholder="Pilih Hak Akses">
+                <template v-slot:caret>
+                  <div>
+                    <div class="multiselect__select">
+                      <span>
+                        <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
+                          <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
+                        </svg>
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </template>            
-            </VueMultiselect>
-            <ErrorMessage name="hak_akses" class="capitalize text-sm text-red-600" />
-            <div v-if="error.hak_akses" class="capitalize text-sm text-red-600"><span>{{ error.hak_akses[0] }}</span></div>
+                </template>            
+              </VueMultiselect>
+              <ErrorMessage name="hak_akses" class="capitalize text-sm text-red-600" />
+              <div v-if="error.hak_akses" class="capitalize text-sm text-red-600"><span>{{ error.hak_akses[0] }}</span></div>              
+            </div>
+            <div class="w-1/2 mb-2">
+              <label for="no_telp" class="label-control">No Telp <span class="text-red-600">*</span></label>
+              <Field id="no_telp" name="no_telp" type="text" v-model="noTelp" label="No Telp" maxlength="255" rules="required" class="form-control" />
+              <ErrorMessage name="no_telp" class="capitalize text-sm text-red-600" />
+              <div v-if="error.no_telp" class="capitalize text-sm text-red-600"><span>{{ error.no_telp[0] }}</span></div>              
+            </div>
           </div>
           <div class="w-full mb-2">
             <label for="email" class="label-control">Email <span class="text-red-600">*</span></label>
@@ -143,13 +151,13 @@
           <div class="flex w-full gap-4">
             <div class="w-1/2 mb-2">
               <label for="password" class="label-control">Password <span class="text-red-600">*</span></label>
-              <Field id="password" name="password" type="password" v-model="password" label="Password" maxlength="255" rules="required" class="form-control" />
+              <Field id="password" name="password" type="password" v-model="password" label="Password" maxlength="255" rules="" class="form-control" />
               <ErrorMessage name="password" class="capitalize text-sm text-red-600" />
               <div v-if="error.password" class="capitalize text-sm text-red-600"><span>{{ error.password[0] }}</span></div>              
             </div>
             <div class="w-1/2 mb-2">
               <label for="password_confirmation" class="label-control">Konfirmasi Password <span class="text-red-600">*</span></label>
-              <Field id="password_confirmation" name="password_confirmation" type="password" v-model="passwordConfirmation" label="Konfirmasi password" rules="required" class="form-control" />
+              <Field id="password_confirmation" name="password_confirmation" type="password" v-model="passwordConfirmation" label="Konfirmasi password" rules="" class="form-control" />
               <ErrorMessage name="password_confirmation" class="capitalize text-sm text-red-600" />
               <div v-if="error.password_confirmation" class="capitalize text-sm text-red-600"><span>{{ error.password_confirmation[0] }}</span></div>              
             </div>
@@ -261,7 +269,8 @@ export default {
       namaUser: '',
       alamat: '',
       hakAkses: '',
-      hakAksesOptions: ['Kepala Pasar', 'Admin', 'Petugas'],
+      hakAksesOptions: ['Admin', 'Keuangan'],
+      noTelp: '',
       email: '',
       username: '',
       password: '',
@@ -403,6 +412,7 @@ export default {
           this.namaUser = this.record.nama
           this.alamat = this.record.alamat
           this.hakAkses = this.record.hak_akses
+          this.noTelp = this.record.no_telp
           this.email = this.record.email
           this.username = this.record.username
         } else {
@@ -423,6 +433,7 @@ export default {
           nama: this.namaUser,
           alamat: this.alamat,
           hak_akses: this.hakAkses,
+          no_telp: this.noTelp,
           email: this.email,
           username: this.username,
           password: this.password,
@@ -463,7 +474,7 @@ export default {
           let responseReturn = response.data.message
 
           /* IF RESPONSE HAS OBJECT, STORE RESPONSE TO ERRORS VARIABLE */
-          if (responseReturn.nama || responseReturn.alamat || responseReturn.hak_akses || responseReturn.email || responseReturn.username || responseReturn.password) {
+          if (responseReturn.nama || responseReturn.alamat || responseReturn.hak_akses || responseReturn.no_telp || responseReturn.email || responseReturn.username || responseReturn.password) {
               this.error = response.data.message
 
           /* ELSE, THROW ERROR MESSAGES */
@@ -485,6 +496,7 @@ export default {
       this.namaUser = ''
       this.alamat = ''
       this.hakAkses = ''
+      this.noTelp = ''
       this.email = '' 
       this.username = ''
       this.password = ''      
