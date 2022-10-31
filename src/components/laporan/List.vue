@@ -8,9 +8,9 @@
     </div>
     <div class="flex w-full mb-4 gap-4">
       <div class="w-1/2 p-6 rounded-sm bg-white shadow-lg">
-        <h1 class="text-xl text-center mb-2">Laporan Pembelian</h1>
+        <h1 class="text-center mb-2">Laporan Pembelian</h1>
         <div class="flex items-center gap-4">
-          <v-date-picker ref="calendar" v-model="filterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
+          <v-date-picker ref="calendar" v-model="pembelianFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
             <template v-slot="{ inputValue, inputEvents, isDragging }">
               <div class="flex gap-2">
                 <div class="w-1/2 mb-4">
@@ -33,15 +33,14 @@
             </template>
           </v-date-picker>
           <div class="flex -mt-4 gap-2">
-            <button type="button" class="btn btn--primary" @click="runSearch()">Tampilkan</button>
-            <button type="button" class="btn btn--success" v-print="printObj">Cetak</button> 
+            <button type="button" class="btn btn--success" @click="toggleLaporanPembelian()">Tampilkan</button>
           </div>
         </div>
       </div>
       <div class="w-1/2 p-6 rounded-sm bg-white shadow-lg">   
-        <h1 class="text-xl text-center mb-2">Laporan Penjualan</h1>
+        <h1 class="text-center mb-2">Laporan Penjualan</h1>
         <div class="flex items-center gap-4">
-          <v-date-picker ref="calendar" v-model="filterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
+          <v-date-picker ref="calendar" v-model="penjualanFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
             <template v-slot="{ inputValue, inputEvents, isDragging }">
               <div class="flex gap-2">
                 <div class="w-1/2 mb-4">
@@ -64,17 +63,16 @@
             </template>
           </v-date-picker>
           <div class="flex -mt-4 gap-2">
-            <button type="button" class="btn btn--primary" @click="runSearch()">Tampilkan</button>
-            <button type="button" class="btn btn--success" v-print="printObj">Cetak</button> 
+            <button type="button" class="btn btn--success" @click="toggleLaporanPenjualan()">Tampilkan</button>
           </div>
         </div>
       </div>      
     </div>
     <div class="flex w-full mb-4 gap-4">
       <div class="w-1/2 p-6 rounded-sm bg-white shadow-lg">   
-        <h1 class="text-xl text-center mb-2">Laporan Jurnal Umum</h1>
+        <h1 class="text-center mb-2">Laporan Jurnal Umum</h1>
         <div class="flex items-center gap-4">
-          <v-date-picker ref="calendar" v-model="filterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
+          <v-date-picker ref="calendar" v-model="jurnalFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
             <template v-slot="{ inputValue, inputEvents, isDragging }">
               <div class="flex gap-2">
                 <div class="w-1/2 mb-4">
@@ -97,15 +95,14 @@
             </template>
           </v-date-picker>
           <div class="flex -mt-4 gap-2">
-            <button type="button" class="btn btn--primary" @click="runSearch()">Tampilkan</button>
-            <button type="button" class="btn btn--success" v-print="printObj">Cetak</button> 
+            <button type="button" class="btn btn--success" @click="runSearch()">Tampilkan</button>
           </div>
         </div>
       </div>
       <div class="w-1/2 p-6 rounded-sm bg-white shadow-lg">
-        <h1 class="text-xl text-center mb-2">Laporan Neraca</h1>
+        <h1 class="text-center mb-2">Laporan Neraca</h1>
         <div class="flex items-center gap-4">
-          <v-date-picker ref="calendar" v-model="filterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
+          <v-date-picker ref="calendar" v-model="neracaFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
             <template v-slot="{ inputValue, inputEvents, isDragging }">
               <div class="flex gap-2">
                 <div class="w-1/2 mb-4">
@@ -128,17 +125,16 @@
             </template>
           </v-date-picker>
           <div class="flex -mt-4 gap-2">
-            <button type="button" class="btn btn--primary" @click="runSearch()">Tampilkan</button>
-            <button type="button" class="btn btn--success" v-print="printObj">Cetak</button> 
+            <button type="button" class="btn btn--success" @click="runSearch()">Tampilkan</button>
           </div>
         </div>
       </div>      
     </div>
     <div class="flex w-full mb-4 gap-4">
       <div class="w-1/2 p-6 rounded-sm bg-white shadow-lg">
-        <h1 class="text-xl text-center mb-2">Laporan Laba Rugi</h1>
+        <h1 class="text-center mb-2">Laporan Laba Rugi</h1>
         <div class="flex items-center gap-4">
-          <v-date-picker ref="calendar" v-model="filterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
+          <v-date-picker ref="calendar" v-model="labaRugiFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
             <template v-slot="{ inputValue, inputEvents, isDragging }">
               <div class="flex gap-2">
                 <div class="w-1/2 mb-4">
@@ -161,15 +157,14 @@
             </template>
           </v-date-picker>
           <div class="flex -mt-4 gap-2">
-            <button type="button" class="btn btn--primary" @click="runSearch()">Tampilkan</button>
-            <button type="button" class="btn btn--success" v-print="printObj">Cetak</button> 
+            <button type="button" class="btn btn--success" @click="runSearch()">Tampilkan</button>
           </div>
         </div>
       </div>
       <div class="w-1/2 p-6 rounded-sm bg-white shadow-lg">
-        <h1 class="text-xl text-center mb-2">Laporan Arus Kas</h1>
+        <h1 class="text-center mb-2">Laporan Arus Kas</h1>
         <div class="flex items-center gap-4">
-          <v-date-picker ref="calendar" v-model="filterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
+          <v-date-picker ref="calendar" v-model="kasFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
             <template v-slot="{ inputValue, inputEvents, isDragging }">
               <div class="flex gap-2">
                 <div class="w-1/2 mb-4">
@@ -192,17 +187,16 @@
             </template>
           </v-date-picker>
           <div class="flex -mt-4 gap-2">
-            <button type="button" class="btn btn--primary" @click="runSearch()">Tampilkan</button>
-            <button type="button" class="btn btn--success" v-print="printObj">Cetak</button> 
+            <button type="button" class="btn btn--success" @click="runSearch()">Tampilkan</button>
           </div>
         </div>
       </div>      
     </div> 
     <div class="flex w-full mb-4 gap-4">
       <div class="w-1/2 p-6 rounded-sm bg-white shadow-lg">
-        <h1 class="text-xl text-center mb-2">Laporan Perubahan Modal</h1>
+        <h1 class="text-center mb-2">Laporan Perubahan Modal</h1>
         <div class="flex items-center gap-4">
-          <v-date-picker ref="calendar" v-model="filterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
+          <v-date-picker ref="calendar" v-model="modalFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
             <template v-slot="{ inputValue, inputEvents, isDragging }">
               <div class="flex gap-2">
                 <div class="w-1/2 mb-4">
@@ -225,42 +219,33 @@
             </template>
           </v-date-picker>
           <div class="flex -mt-4 gap-2">
-            <button type="button" class="btn btn--primary" @click="runSearch()">Tampilkan</button>
-            <button type="button" class="btn btn--success" v-print="printObj">Cetak</button> 
+            <button type="button" class="btn btn--success" @click="runSearch()">Tampilkan</button>
           </div>
         </div>
       </div>
       <div class="w-1/2">
       </div>      
-    </div>            
+    </div>
+    <LaporanPembelian ref="laporanPembelian" />
+    <LaporanPenjualan ref="laporanPenjualan" />
   </div>
 </template>
 
 <script>
-import format from '@/helpers/formatNumber'
-import { Field, Form, ErrorMessage } from "vee-validate"
 import { createToastInterface } from 'vue-toastification'
-import _, { sum } from 'lodash'
-import dayjs from 'dayjs'
-import pembelianServices from '@/services/pembelian/pembelianServices'
-import IconPlus from '../icons/IconPlus.vue'
-import IconTrash from '../icons/IconTrash.vue'
-import IconEdit from '../icons/IconEdit.vue'
 import IconDateRange from '../icons/IconDateRange.vue'
 import Modal from '../widgets/Modal.vue'
 import Logo from '../../assets/images/logo.png'
+import LaporanPembelian from './LaporanPembelian.vue'
+import LaporanPenjualan from './LaporanPenjualan.vue'
 
 export default {
   name: 'RekapitulasiListPage',
   components: {
-    Field,
-    Form,
-    ErrorMessage,    
-    IconPlus,
-    IconTrash,
-    IconEdit,
     IconDateRange,
     Modal,
+    LaporanPembelian,
+    LaporanPenjualan,
   },
   setup () { 
     const toastOptions = {
@@ -285,18 +270,34 @@ export default {
   },  
   data() {
     return {
-      take: 25,
-      page: 1,
-      search: null,
-      dateField: { field: 'created_at', name: 'Tanggal Dibuat' },
-      dateFields: [
-        { field: 'created_at', name: 'Tanggal Dibuat' },
-        { field: 'updated_at', name: 'Tanggal Diedit' }
-      ],
-      filterDate: {
-        start: new Date(),
-        end: new Date()
+      pembelianFilterDate: {
+        start: '',
+        end: ''
       },
+      penjualanFilterDate: {
+        start: '',
+        end: ''
+      },
+      jurnalFilterDate: {
+        start: '',
+        end: ''
+      },
+      neracaFilterDate: {
+        start: '',
+        end: ''
+      },
+      labaRugiFilterDate: {
+        start: '',
+        end: ''
+      },
+      kasFilterDate: {
+        start: '',
+        end: ''
+      },
+      modalFilterDate: {
+        start: '',
+        end: ''
+      },                                 
       masks: {
         input: 'YYYY/MM/DD',
       },
@@ -307,27 +308,7 @@ export default {
           dates: new Date(),
         },
       ],
-      sortField: { field: 'id', name: 'ID (Bawaan)' },
-      sortFields: [
-        { field: 'tanggal', name: 'Tanggal' },
-        { field: 'grand_total', name: 'Grand Total' },
-        { field: 'updated_at', name: 'Diedit' },
-        { field: 'id', name: 'ID (Bawaan)' }
-      ],        
-      sortOption: { field: 'asc', name: 'Ascending' },
-      sortOptions: [
-        { field: 'asc', name: 'Ascending' },
-        { field: 'desc', name: 'Descending' }
-      ],
       awaitingSearch: false,
-      totalRecords: null,
-      totalFiltered: null,
-      fromRecord: null,
-      toRecord: null,
-      currentPage: null,
-      lastPage: null,
-      shows: ['25', '50', '100'],
-      pendapatan: [],
       error: [],
       isLoading: false,
       number: {
@@ -336,235 +317,34 @@ export default {
         prefix: '',
         precision: 2,
       },
-      printObj: {
-        id: "canvasData",
-        popTitle: 'Laporan Rekapitulasi Pendapatan Parkir',
-        beforeOpenCallback (vue) {
-          vue.printLoading = true
-          console.log('打开之前')
-        },
-        openCallback (vue) {
-          vue.printLoading = false
-          console.log('执行了打印')
-        },
-        closeCallback () {
-          console.log('关闭了打印工具')
-        }
-      },
       LogoSource: Logo,
-      tanggalAwal: '',
-      tanggalAkhir: ''
     }
   },
   methods: {
-    incrementIndex(key) {
-      return key + 1
-    },
-    hitungTotal(props) {
-      this.totalKendaraan += props.jumlah
-      this.grandTotal += props.total
-    },
-    async fetchData() {
-      try {
-        this.isLoading = true
-
-        const params = {
-          take: this.take,
-          page: this.page,
-          search: this.search,
-          date_field: this.dateField.field,
-          start: this.filterDate.start || '',
-          end: this.filterDate.end || '',
-          sort_field: this.sortField.field,
-          sort_option: this.sortOption.field
-        }
-        const response = await pembelianServices.fetchAll(params)
-        if (response.data.status === 'success') {
-          this.isLoading =false
-          this.pendapatan = response.data.data
-        } else {
-          this.isLoading =false
-
+    toggleLaporanPembelian() {
+      if (this.pembelianFilterDate.start == '' && this.pembelianFilterDate.end == '') {
           /* THROW ERROR MESSAGES */
-          this.toast.error(response.data.message)          
+          this.toast.error('Silakan masukan tanggal awal dan akhir laporan yang ingin ditampilkan!')         
+      } else {
+        const params = {
+          tanggal_awal: this.pembelianFilterDate ? this.pembelianFilterDate.start : null,
+          tanggal_akhir: this.pembelianFilterDate ? this.pembelianFilterDate.end : null,
         }
-      } catch (error) {
-        this.isLoading =false
-        console.log(error.message)
+        this.$refs.laporanPembelian.toggleModal(params)
       }
     },
-    updateQueryString() {
-      const search = this.search ? this.search.toLowerCase() : ''
-      const start = this.filterDate.start ? new Date(this.filterDate.start).toISOString().slice(0,10) : ''
-      const end = this.filterDate.end ? new Date(this.filterDate.end).toISOString().slice(0,10) : ''
-      const page = this.page
-
-      this.$router.replace({ 
-        query: {
-          take: this.take,
-          page: page,
-          search: search,
-          date_field: this.dateField.field,
-          start: start,
-          end: end,
-          sort_field: this.sortField.field,
-          sort_option: this.sortOption.field
-        } 
-      }).catch(() => {})
-    },
-    searchFocus(event) {
-      if (event.keyCode === 191) {
-        setTimeout(() => {
-          this.$refs.search.focus()
-        }, 5)
-      }
-    },
-    prevPage() {
-      this.page = this.currentPage - 1
-      this.updateQueryString()
-      this.fetchData()
-    },
-    nextPage() {
-      this.page = this.currentPage + 1
-      this.updateQueryString()
-      this.fetchData()
-    },
-    updateTake() {
-      this.page = 1
-      this.updateQueryString()
-      this.fetchData()      
-    },
-    runSearch: _.debounce(function() {
-      if (!this.awaitingSearch) {
-        this.page = 1
-        this.updateQueryString()
-        this.fetchData()
-        this.awaitingSearch = false
-      }
-    }, 1000),
-    formatNumber(num) {
-      let result = format.formatNumber(num)
-      return result
-    },
-    unformatNumber(num) {
-      let result = format.unformatNumber(num)
-      return result
-    },
-    toFixed(num, digit) {
-      let result = format.toFixed(num, digit)
-      return result
-    },
-    onlyNumber() {
-      return format.onlyNumber()
-    },  
-  },
-  created() {
-    this.fetchData()
-    document.addEventListener("keydown", this.searchFocus);
-  },
-  unmounted() {
-    document.removeEventListener("keydown", this.searchFocus);
-  },
-  computed: {
-    totalKendaraan: function() {
-      let sum = 0
-      this.pendapatan.forEach(function(item){
-        sum += parseFloat(item.jumlah)
-      })
-
-      return sum
-    },
-    grandTotal: function() {
-      let sum = 0
-      this.pendapatan.forEach(function(item){
-        sum += parseFloat(item.total)
-      })
-
-      return sum
-    }    
-  },
-  watch: {
-    filterDate: function() {
-      this.tanggalAwal = this.filterDate.start ? dayjs(this.filterDate.start).format('DD MMM YYYY') : ''
-      this.tanggalAkhir = this.filterDate.end ? dayjs(this.filterDate.end).format('DD MMM YYYY') : ''
-    },
-    '$route.query.take': {
-      handler: function(take) {
-        if (take) {
-          this.take = take
+    toggleLaporanPenjualan() {
+      if (this.penjualanFilterDate.start == '' && this.penjualanFilterDate.end == '') {
+          /* THROW ERROR MESSAGES */
+          this.toast.error('Silakan masukan tanggal awal dan akhir laporan yang ingin ditampilkan!')         
+      } else {
+        const params = {
+          tanggal_awal: this.penjualanFilterDate ? this.penjualanFilterDate.start : null,
+          tanggal_akhir: this.penjualanFilterDate ? this.penjualanFilterDate.end : null,
         }
-      },
-      immediate: true
+        this.$refs.laporanPenjualan.toggleModal(params)
+      }
     },    
-    '$route.query.page': {
-      handler: function(page) {
-        this.page = page
-      },
-      immediate: true
-    },
-    '$route.query.search': {
-      handler: function(search) {
-        this.search = search
-      },
-      immediate: true
-    },
-    '$route.query.date_field': {
-      handler: function(date_field) {
-        try {
-          const option = this.dateFields.filter(item => date_field.includes(item.field))
-          this.dateField = { field: option[0].field, name: option[0].name }          
-        } catch (error) {
-          this.dateField = { field: 'created_at', name: 'Tanggal Dibuat' }        
-        }
-      },
-      immediate: true
-    },
-    '$route.query.start': {
-      handler: function(start) {
-        if (this.filterDate) {
-          this.filterDate.start = start
-        } else {
-          this.filterDate = {
-            'start': start
-          }          
-        }
-      },
-      immediate: true
-    },
-    '$route.query.end': {
-      handler: function(end) {
-        if (this.filterDate) {
-          this.filterDate.end = end
-        } else {
-          this.filterDate = {
-            'end': end
-          }          
-        }
-      },
-      immediate: true
-    },
-    '$route.query.sort_field': {
-      handler: function(sort_field) {
-        try {
-        const option = this.sortFields.filter(item => sort_field.includes(item.field))
-        this.sortField = { field: option[0].field, name: option[0].name }          
-        } catch (error) {
-          this.sortField = { field: 'tanggal', name: 'Tanggal' }
-        }
-      },
-      immediate: true
-    },
-    '$route.query.sort_option': {
-      handler: function(sort_option) {
-        try {
-          const option = this.sortOptions.filter(item => sort_option.includes(item.field))
-          this.sortOption = { field: option[0].field, name: option[0].name }          
-        } catch (error) {
-          this.sortOption = { field: 'asc', name: 'Ascending' }
-        }
-      },
-      immediate: true
-    }                   
-  }
+  },
 }
 </script>
