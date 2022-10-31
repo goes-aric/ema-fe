@@ -41,7 +41,7 @@
           </li>
         </ul>
         <ul>
-          <li v-if="userData.hak_akses == 'Admin'" @click="toggleSidebar">
+          <li v-if="userData.hak_akses == 'Admin' || userData.hak_akses == 'Keuangan'" @click="toggleSidebar">
             <router-link :to="{ name: 'laporan' }" class="nav-item">
               <IconAssignment />
               <span class="ml-2 relative">Laporan</span>
