@@ -139,7 +139,7 @@ export default {
         },
         yAxis: {
           title: {
-            text: 'Jumlah Pendapatan'
+            text: 'Jumlah Penjualan'
           },
         },
         tooltip: {
