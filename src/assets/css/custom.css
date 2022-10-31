@@ -14,10 +14,10 @@
   @apply px-6 py-4 text-sm items-center border rounded-sm cursor-pointer disabled:opacity-50 disabled:cursor-default outline-none focus:outline-none;
 }
 .btn--light-primary {
-  @apply bg-orange-100 border-orange-100 hover:bg-orange-200 hover:border-orange-200 disabled:bg-orange-100 text-orange-800;
+  @apply bg-purple-100 border-purple-100 hover:bg-purple-200 hover:border-purple-200 disabled:bg-purple-100 text-purple-800;
 }
 .btn--primary {
-  @apply bg-orange-600 border-orange-600 hover:bg-orange-700 hover:border-orange-700 disabled:bg-orange-600 text-white;
+  @apply bg-purple-600 border-purple-600 hover:bg-purple-700 hover:border-purple-700 disabled:bg-purple-600 text-white;
 }
 .btn--info {
   @apply bg-blue-500 border-blue-500 hover:bg-blue-600 hover:border-blue-600 disabled:bg-blue-500 text-white;
@@ -173,7 +173,7 @@
   @apply rounded-md absolute inset-0 bg-gray-50;
 }
 nav a.router-link-active {
-  @apply text-gray-800 hover:text-gray-700 rounded-md bg-gray-100 !important;
+  @apply text-white rounded-md bg-blue-500 !important;
 }
 
 /* ADDITIONAL TOOLTIP */
