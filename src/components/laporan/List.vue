@@ -125,7 +125,7 @@
             </template>
           </v-date-picker>
           <div class="flex -mt-4 gap-2">
-            <button type="button" class="btn btn--success" @click="runSearch()">Tampilkan</button>
+            <button type="button" class="btn btn--success" @click="toggleLaporanNeraca()">Tampilkan</button>
           </div>
         </div>
       </div>      
@@ -157,7 +157,7 @@
             </template>
           </v-date-picker>
           <div class="flex -mt-4 gap-2">
-            <button type="button" class="btn btn--success" @click="runSearch()">Tampilkan</button>
+            <button type="button" class="btn btn--success" @click="toggleLaporanLabaRugi()">Tampilkan</button>
           </div>
         </div>
       </div>
@@ -187,7 +187,7 @@
             </template>
           </v-date-picker>
           <div class="flex -mt-4 gap-2">
-            <button type="button" class="btn btn--success" @click="runSearch()">Tampilkan</button>
+            <button type="button" class="btn btn--success" @click="toggleLaporanArusKas()">Tampilkan</button>
           </div>
         </div>
       </div>      
@@ -219,7 +219,7 @@
             </template>
           </v-date-picker>
           <div class="flex -mt-4 gap-2">
-            <button type="button" class="btn btn--success" @click="runSearch()">Tampilkan</button>
+            <button type="button" class="btn btn--success" @click="toggleLaporanPerubahanModal()">Tampilkan</button>
           </div>
         </div>
       </div>
@@ -229,6 +229,10 @@
     <LaporanPembelian ref="laporanPembelian" />
     <LaporanPenjualan ref="laporanPenjualan" />
     <LaporanJurnalUmum ref="laporanJurnalUmum" />
+    <LaporanNeraca ref="laporanNeraca" />
+    <LaporanLabaRugi ref="laporanLabaRugi" />
+    <LaporanArusKas ref="LaporanArusKas" />
+    <LaporanPerubahanModal ref="LaporanPerubahanModal" />
   </div>
 </template>
 
@@ -240,6 +244,10 @@ import Logo from '../../assets/images/logo.png'
 import LaporanPembelian from './LaporanPembelian.vue'
 import LaporanPenjualan from './LaporanPenjualan.vue'
 import LaporanJurnalUmum from './LaporanJurnalUmum.vue'
+import LaporanNeraca from './LaporanNeraca.vue'
+import LaporanLabaRugi from './LaporanLabaRugi.vue'
+import LaporanArusKas from './LaporanArusKas.vue'
+import LaporanPerubahanModal from './LaporanPerubahanModal.vue'
 
 export default {
   name: 'RekapitulasiListPage',
@@ -249,6 +257,10 @@ export default {
     LaporanPembelian,
     LaporanPenjualan,
     LaporanJurnalUmum,
+    LaporanNeraca,
+    LaporanLabaRugi,
+    LaporanArusKas,
+    LaporanPerubahanModal
   },
   setup () { 
     const toastOptions = {
@@ -359,7 +371,55 @@ export default {
         }
         this.$refs.laporanJurnalUmum.toggleModal(params)
       }
-    },    
+    },
+    toggleLaporanNeraca() {
+      if (this.neracaFilterDate.start == '' && this.neracaFilterDate.end == '') {
+          /* THROW ERROR MESSAGES */
+          this.toast.error('Silakan masukan tanggal awal dan akhir laporan yang ingin ditampilkan!')         
+      } else {
+        const params = {
+          tanggal_awal: this.neracaFilterDate ? this.neracaFilterDate.start : null,
+          tanggal_akhir: this.neracaFilterDate ? this.neracaFilterDate.end : null,
+        }
+        this.$refs.laporanJurnalUmum.toggleModal(params)
+      }
+    },
+    toggleLaporanLabaRugi() {
+      if (this.labaRugiFilterDate.start == '' && this.labaRugiFilterDate.end == '') {
+          /* THROW ERROR MESSAGES */
+          this.toast.error('Silakan masukan tanggal awal dan akhir laporan yang ingin ditampilkan!')         
+      } else {
+        const params = {
+          tanggal_awal: this.labaRugiFilterDate ? this.labaRugiFilterDate.start : null,
+          tanggal_akhir: this.labaRugiFilterDate ? this.labaRugiFilterDate.end : null,
+        }
+        this.$refs.laporanJurnalUmum.toggleModal(params)
+      }
+    },
+    toggleLaporanArusKas() {
+      if (this.kasFilterDate.start == '' && this.kasFilterDate.end == '') {
+          /* THROW ERROR MESSAGES */
+          this.toast.error('Silakan masukan tanggal awal dan akhir laporan yang ingin ditampilkan!')         
+      } else {
+        const params = {
+          tanggal_awal: this.kasFilterDate ? this.kasFilterDate.start : null,
+          tanggal_akhir: this.kasFilterDate ? this.kasFilterDate.end : null,
+        }
+        this.$refs.laporanJurnalUmum.toggleModal(params)
+      }
+    },
+    toggleLaporanPerubahanModal() {
+      if (this.modalFilterDate.start == '' && this.modalFilterDate.end == '') {
+          /* THROW ERROR MESSAGES */
+          this.toast.error('Silakan masukan tanggal awal dan akhir laporan yang ingin ditampilkan!')         
+      } else {
+        const params = {
+          tanggal_awal: this.modalFilterDate ? this.modalFilterDate.start : null,
+          tanggal_akhir: this.modalFilterDate ? this.modalFilterDate.end : null,
+        }
+        this.$refs.laporanJurnalUmum.toggleModal(params)
+      }
+    },                    
   },
 }
 </script>
