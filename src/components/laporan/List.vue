@@ -95,7 +95,7 @@
             </template>
           </v-date-picker>
           <div class="flex -mt-4 gap-2">
-            <button type="button" class="btn btn--success" @click="runSearch()">Tampilkan</button>
+            <button type="button" class="btn btn--success" @click="toggleLaporanJurnalUmum()">Tampilkan</button>
           </div>
         </div>
       </div>
@@ -228,6 +228,7 @@
     </div>
     <LaporanPembelian ref="laporanPembelian" />
     <LaporanPenjualan ref="laporanPenjualan" />
+    <LaporanJurnalUmum ref="laporanJurnalUmum" />
   </div>
 </template>
 
@@ -238,6 +239,7 @@ import Modal from '../widgets/Modal.vue'
 import Logo from '../../assets/images/logo.png'
 import LaporanPembelian from './LaporanPembelian.vue'
 import LaporanPenjualan from './LaporanPenjualan.vue'
+import LaporanJurnalUmum from './LaporanJurnalUmum.vue'
 
 export default {
   name: 'RekapitulasiListPage',
@@ -246,6 +248,7 @@ export default {
     Modal,
     LaporanPembelian,
     LaporanPenjualan,
+    LaporanJurnalUmum,
   },
   setup () { 
     const toastOptions = {
@@ -343,6 +346,18 @@ export default {
           tanggal_akhir: this.penjualanFilterDate ? this.penjualanFilterDate.end : null,
         }
         this.$refs.laporanPenjualan.toggleModal(params)
+      }
+    },
+    toggleLaporanJurnalUmum() {
+      if (this.jurnalFilterDate.start == '' && this.jurnalFilterDate.end == '') {
+          /* THROW ERROR MESSAGES */
+          this.toast.error('Silakan masukan tanggal awal dan akhir laporan yang ingin ditampilkan!')         
+      } else {
+        const params = {
+          tanggal_awal: this.jurnalFilterDate ? this.jurnalFilterDate.start : null,
+          tanggal_akhir: this.jurnalFilterDate ? this.jurnalFilterDate.end : null,
+        }
+        this.$refs.laporanJurnalUmum.toggleModal(params)
       }
     },    
   },
