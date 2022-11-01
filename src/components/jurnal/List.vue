@@ -56,10 +56,10 @@
               <td class="text-left">{{ item.nama_user }}</td>
               <td class="text-center">
                 <div class="flex item-center justify-center">
-                  <button @click="toggleEdit( item.id )" type="button" class="btn-edit" alt="Edit" title="Edit">
+                  <button @click="toggleEdit( item.id )" type="button" class="btn-edit" alt="Edit" title="Edit" :disabled="item.sumber">
                     <IconEdit />
                   </button>                  
-                  <button @click="confirmDialog( item.id )" type="button" class="btn-delete" alt="Hapus" title="Hapus">
+                  <button @click="confirmDialog( item.id )" type="button" class="btn-delete" alt="Hapus" title="Hapus" :disabled="item.sumber">
                     <IconTrash />
                   </button>
                 </div>
