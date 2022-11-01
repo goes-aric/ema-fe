@@ -1,5 +1,5 @@
 <template>
-  <nav class="px-1 pt-6 overflow-y-auto font-medium text-base sm:px-3 xl:px-5 lg:text-sm pb-10 lg:pt-10 lg:pb-14 h-screen">
+  <nav class="px-1 pt-6 overflow-y-auto font-medium text-base sm:px-3 xl:px-5 lg:text-sm pb-10 lg:pt-10 lg:pb-14 h-screen bg-blue-600">
     <ul>
       <li class="mt-6">
         <span @click="toggleSidebar">
@@ -48,7 +48,7 @@
             </router-link>
           </li>
           <li @click="toggleSidebar">
-            <a @click="logoutUser()" class="flex items-center px-3 py-2 hover:bg-gray-50 hover:text-gray-700 cursor-pointer">
+            <a @click="confirmDialog()" class="nav-item cursor-pointer">
               <IconLogout />
               <span class="ml-2">Logout</span>
             </a>            
@@ -109,6 +109,22 @@ export default {
     toggleSidebar(){
       this.$store.dispatch('toggleSidebar', !this.isHidden)
     },
+    async confirmDialog() {
+      this.$swal.fire({
+        title: 'Logout',
+        text: "Anda yakin akan keluar dari sistem ?",
+        icon: 'question',
+        showCancelButton: true,
+        cancelButtonColor: '#4b5563',
+        confirmButtonText: 'Ya',
+        cancelButtonText: 'Batal'
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          /* CALL CREATE FUNCTION */
+          this.logoutUser()
+        }
+      })
+    },    
     async logoutUser(){
       try {
         const response = await authServices.logout()

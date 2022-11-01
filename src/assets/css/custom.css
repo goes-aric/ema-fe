@@ -167,13 +167,13 @@
   @apply px-3 mb-3 lg:mb-3 uppercase tracking-wide font-semibold text-sm lg:text-xs text-gray-900;
 }
 .nav-item {
-  @apply flex px-3 py-2 transition-colors duration-200 relative block text-gray-600 hover:text-gray-900;
+  @apply flex px-3 py-2 transition-colors duration-200 relative block text-white;
 }
 .nav-item-bg {
   @apply rounded-md absolute inset-0 bg-gray-50;
 }
 nav a.router-link-active {
-  @apply text-white rounded-md bg-blue-500 !important;
+  @apply rounded-md bg-white text-gray-900 !important;
 }
 
 /* ADDITIONAL TOOLTIP */
@@ -430,7 +430,7 @@ tbody {
   @apply text-gray-600 text-sm font-light;
 }
 th {
-  @apply py-4 px-2 text-xs font-semibold border-y border-gray-200 uppercase tracking-wider;
+  @apply py-4 px-2 text-xs font-semibold bg-gray-50 border-y border-gray-200 uppercase tracking-wider;
 }
 td {
   @apply py-4 px-2 border-y border-gray-200;
