@@ -291,7 +291,7 @@ export default {
       sortField: { field: 'id', name: 'ID (Bawaan)' },
       sortFields: [
         { field: 'no_jurnal', name: 'No Jurnal' },
-        { field: 'tanggal', name: 'Tanggal' },
+        { field: 'tanggal_transaksi', name: 'Tanggal' },
         { field: 'updated_at', name: 'Diedit' },
         { field: 'id', name: 'ID (Bawaan)' }
       ],        
