@@ -10,8 +10,8 @@
               <img :src="LogoSource" class="h-16 mx-auto">
             </div>
             <div class="w-11/12 text-center">
-              <h1 class="text-xl uppercase">Perusahaan Umum Daerah Pasar Mangu Giri Sedana</h1>
-              <h1 class="text-xl uppercase">Unit Pasar Umum Beringkit</h1>
+              <h1 class="text-xl uppercase">Unit Bina Usaha</h1>
+              <h1 class="text-xl uppercase">PERUMDA Pasar Mangu Giri Sedana</h1>
               <span>Jalan I Gusti Ngurah Rai Mengwi Badung</span>
             </div>
           </div>
