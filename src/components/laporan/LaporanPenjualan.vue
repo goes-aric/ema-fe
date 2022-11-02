@@ -46,7 +46,17 @@
                 </tr>                   
               </template>         
             </tbody>                              
-          </table>          
+          </table>
+          <div class="flex w-full mt-4">
+            <div class="w-1/3"></div>
+            <div class="w-1/3"></div>
+            <div class="w-1/3 text-center">
+              <span class="block mb-4">KA. UNIT PASAR UMUM BERINGKIT</span>
+              <span class="underline">(I PUTU RUDITA)</span>
+              <span class="block text-sm mb-8">KA. UNIT PASAR UMUM BERINGKIT</span>
+              <span class="text-sm underline">(I PUTU RUDITA)</span>
+            </div>
+          </div>          
         </div>   
       </template>
       <template v-slot:footer>
