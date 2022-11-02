@@ -88,23 +88,23 @@
       <template v-slot:header><h3>{{ modalTitle }}</h3></template>
       <template v-slot:body>
         <Form id="modalForm" @submit="saveConfirmDialog()">
-          <div class="flex w-full mb-2 gap-12">
-            <div class="w-2/5 mb-4">
+          <div class="md:flex w-full gap-12 mb-2">
+            <div class="w-full md:w-2/5 mb-4">
               <div class="flex w-full gap-2">
-                <div class="md:w-2/5">
+                <div class="w-full md:w-2/5 mb-2">
                   <label for="no_jurnal" class="label-control md:py-3">No Jurnal <span class="text-red-600">*</span></label>
                 </div>
-                <div class="md:w-3/5">
+                <div class="w-full md:w-3/5 mb-2">
                   <Field id="no_jurnal" name="no_jurnal" v-model="noJurnal" label="No Jurnal" type="text" rules="" class="form-control" disabled />
                   <ErrorMessage name="no_jurnal" class="capitalize text-sm text-red-600" />
                   <div v-if="error.no_jurnal" class="capitalize text-sm text-red-600"><span>{{ error.no_jurnal[0] }}</span></div>
                 </div>
               </div>
               <div class="flex w-full gap-2">
-                <div class="md:w-2/5">
+                <div class="w-full md:w-2/5 mb-2">
                   <label for="tanggal" class="label-control md:py-3">Tanggal <span class="text-red-600">*</span></label>
                 </div>
-                <div class="md:w-3/5">
+                <div class="w-full md:w-3/5 mb-2">
                   <v-date-picker v-model="tanggal" mode="date" :masks="masks" color="purple" title-position="left" :attributes="attrs">
                     <template v-slot="{ inputValue, inputEvents }">
                       <div class="md:flex gap-6">
@@ -122,12 +122,23 @@
                   </v-date-picker>
                 </div>                
               </div>
+              <div class="flex w-full gap-2">
+                <div class="w-full md:w-2/5 mb-2">
+                  <label for="gambar" class="label-control md:py-3">Bukti Transaksi<span class="text-red-600">*</span></label>
+                </div>
+                <div class="w-full md:w-3/5 mb-2">
+                  <div class="h-32 border border-dashed border-gray-400 items-center justify-center p-1 rounded-sm mb-2">
+                    <img class="h-full" :src="image" />
+                  </div>
+                  <input id="gambar" name="gambar" type="file" ref="gambar" @change="onFileChange" rules="image|ext:jpg,png" label="Gambar" />
+                </div>
+              </div>              
             </div>
-            <div class="flex w-3/5 mb-4">
-              <div class="md:w-1/4">
+            <div class="flex w-full md:w-3/5 mb-4">
+              <div class="w-full md:w-1/4 mb-2">
                 <label for="deskripsi" class="label-control md:py-3">Deskripsi <span class="text-red-600">*</span></label>
               </div>
-              <div class="md:w-3/4">
+              <div class="w-full md:w-3/4 mb-2">
                 <Field id="deskripsi" name="deskripsi" v-model="deskripsi" label="Deskripsi" as="textarea" rules="required" class="form-control" />
                 <ErrorMessage name="deskripsi" class="capitalize text-sm text-red-600" />
                 <div v-if="error.deskripsi" class="capitalize text-sm text-red-600"><span>{{ error.deskripsi[0] }}</span></div>
@@ -135,8 +146,8 @@
             </div>
           </div>
           <div class="w-full mb-4">
-            <div class="md:flex gap-2">
-              <div class="w-7/12 mb-2">
+            <div class="flex gap-2">
+              <div class="w-full md:w-7/12 mb-2">
                 <label for="akun" class="label-control">Akun <span class="text-red-600">*</span></label>
                 <VueMultiselect id="akun" name="akun" ref="akun" v-model="akun" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="id" :custom-label="nameWithId" placeholder="Pilih Akun">
                   <template v-slot:caret>
@@ -154,19 +165,19 @@
                 <ErrorMessage name="akun" class="capitalize text-sm text-red-600" />
                 <div v-if="error.akun" class="capitalize text-sm text-red-600"><span>{{ error.akun[0] }}</span></div>                   
               </div>
-              <div class="w-2/12 mb-2">
+              <div class="w-2/5 md:w-2/12 mb-2">
                 <label for="debet" class="label-control">Debet<span class="text-red-600">*</span></label>
                 <Field id="debet" name="debet" v-model.lazy="debet" v-number="number" label="Debet" type="text" rules="" class="form-control" />
                 <ErrorMessage name="debet" class="capitalize text-sm text-red-600" />
                 <div v-if="error.debet" class="capitalize text-sm text-red-600"><span>{{ error.debet[0] }}</span></div>
               </div>
-              <div class="w-2/12 mb-2">
+              <div class="w-2/5 md:w-2/12 mb-2">
                 <label for="kredit" class="label-control">Kredit <span class="text-red-600">*</span></label>
                 <Field id="kredit" name="kredit" v-model.lazy="kredit" v-number="number" label="Kredit" type="text" rules="" class="form-control" />
                 <ErrorMessage name="kredit" class="capitalize text-sm text-red-600" />
                 <div v-if="error.kredit" class="capitalize text-sm text-red-600"><span>{{ error.kredit[0] }}</span></div>                
               </div>
-              <div class="w-1/12 mb-2">
+              <div class="w-1/5 md:w-1/12 mb-2">
                 <button type="button" class="btn btn--success mt-6 flex" @click="addDetail()">
                   <IconPlus />
                 </button>
@@ -316,8 +327,9 @@ export default {
       jurnalId: '',
       noJurnal: '',
       tanggal: '',
-      nominal: '',
-      deskripsi: '',    
+      deskripsi: '',
+      image: '',
+      jurnalImage: '',       
       akun: '',
       akunOptions: [],
       debet: '',
@@ -473,6 +485,7 @@ export default {
 
           this.noJurnal = this.record.no_jurnal
           this.tanggal = this.record.tanggal_transaksi
+          this.image = this.record.gambar
           this.deskripsi = this.record.deskripsi
 
           let debet = 0
@@ -507,6 +520,7 @@ export default {
         let payload = new FormData()
         payload.append('tanggal_transaksi', dayjs(this.tanggal).format('YYYY/MM/DD'))
         payload.append('deskripsi', this.deskripsi)
+        payload.append('gambar', this.jurnalImage)
         payload.append('jurnal', JSON.stringify(this.transaksiDetail))
 
         let response = ''
@@ -568,7 +582,8 @@ export default {
       this.deskripsi = ''
       this.transaksiDetail = []
       this.totalDebet = ''
-      this.totalKredit = '' 
+      this.totalKredit = ''
+      this.image = ''
     },
     clearForm(){
       this.akun = ''
@@ -697,6 +712,27 @@ export default {
 
       this.transaksiDetail.splice(index, 1)
     },
+    onFileChange(e) {
+      let files = e.target.files || e.dataTransfer.files
+      if (!files.length) {
+        return
+      }
+
+      this.createImage(files[0])
+    },
+    createImage(file) {
+      let reader = new FileReader()
+      let vm = this
+
+      reader.onload = (e) => {
+        vm.image = e.target.result
+      }
+      reader.readAsDataURL(file)
+      this.jurnalImage = this.$refs.gambar.files[0]
+    },
+    removeImage() {
+      this.image = ''
+    },    
   },
   created() {
     this.fetchData()
