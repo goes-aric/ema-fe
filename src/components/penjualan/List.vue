@@ -86,112 +86,121 @@
       <template v-slot:header><h3>{{ modalTitle }}</h3></template>
       <template v-slot:body>
         <Form id="modalForm" @submit="saveConfirmDialog()">
-          <div class="w-full mb-2 gap-12">
-            <div class="flex w-full mb-2 gap-2">
-              <div class="md:w-2/5">
-                <label for="kode_jual" class="label-control md:py-3">Kode Beli <span class="text-red-600">*</span></label>
-              </div>
-              <div class="flex md:w-3/5">
-                <div class="w-1/2">
-                  <Field id="kode_jual" name="kode_jual" v-model="kodeJual" label="Kode Beli" type="text" rules="" class="form-control" disabled />
-                  <ErrorMessage name="kode_jual" class="capitalize text-sm text-red-600" />
-                  <div v-if="error.kode_jual" class="capitalize text-sm text-red-600"><span>{{ error.kode_jual[0] }}</span></div>                  
-                </div>
-                <div class="w-1/2"></div>
-              </div>
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="kode_jual" class="label-control md:py-3">Kode Beli <span class="text-red-600">*</span></label>
             </div>
-            <div class="flex w-full mb-2 gap-2">
-              <div class="md:w-2/5">
-                <label for="tanggal" class="label-control md:py-3">Tanggal <span class="text-red-600">*</span></label>
+            <div class="flex md:w-3/5">
+              <div class="w-1/2">
+                <Field id="kode_jual" name="kode_jual" v-model="kodeJual" label="Kode Beli" type="text" rules="" class="form-control" disabled />
+                <ErrorMessage name="kode_jual" class="capitalize text-sm text-red-600" />
+                <div v-if="error.kode_jual" class="capitalize text-sm text-red-600"><span>{{ error.kode_jual[0] }}</span></div>                  
               </div>
-              <div class="flex md:w-3/5">
-                <div class="w-1/2">
-                  <v-date-picker v-model="tanggal" mode="date" :masks="masks" color="purple" title-position="left" :attributes="attrs">
-                    <template v-slot="{ inputValue, inputEvents }">
-                      <div class="md:flex gap-6">
-                        <div class="w-full">
-                          <div class="relative flex justify-between items-center">
-                            <input id="tanggal" type="text" class="form-control" :value="inputValue" v-on="inputEvents">
-                            <span class="h-full absolute pointer-events-none right-0">
-                              <IconDateRange class="m-3" />
-                            </span>                      
-                          </div>
-                          <div v-if="error.tanggal" class="capitalize text-sm text-red-600"><span>{{ error.tanggal[0] }}</span></div>
+              <div class="w-1/2"></div>
+            </div>
+          </div>
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="tanggal" class="label-control md:py-3">Tanggal <span class="text-red-600">*</span></label>
+            </div>
+            <div class="flex md:w-3/5">
+              <div class="w-1/2">
+                <v-date-picker v-model="tanggal" mode="date" :masks="masks" color="purple" title-position="left" :attributes="attrs">
+                  <template v-slot="{ inputValue, inputEvents }">
+                    <div class="md:flex gap-6">
+                      <div class="w-full">
+                        <div class="relative flex justify-between items-center">
+                          <input id="tanggal" type="text" class="form-control" :value="inputValue" v-on="inputEvents">
+                          <span class="h-full absolute pointer-events-none right-0">
+                            <IconDateRange class="m-3" />
+                          </span>                      
                         </div>
-                      </div>
-                    </template>
-                  </v-date-picker>                  
-                </div>
-                <div class="w-1/2"></div>
-              </div>
-            </div>
-            <div class="flex w-full mb-2 gap-2">
-              <div class="md:w-2/5">
-                <label for="nominal" class="label-control md:py-3">Nominal <span class="text-red-600">*</span></label>
-              </div>
-              <div class="flex md:w-3/5">
-                <div class="w-1/2">
-                  <Field id="nominal" name="nominal" v-model.lazy="nominal" v-number="number" label="Nominal" type="text" rules="" class="form-control" />
-                  <ErrorMessage name="nominal" class="capitalize text-sm text-red-600" />
-                  <div v-if="error.nominal" class="capitalize text-sm text-red-600"><span>{{ error.nominal[0] }}</span></div>                  
-                </div>
-                <div class="w-1/2"></div>
-              </div>
-            </div>            
-            <div class="flex w-full mb-2 gap-2">
-              <div class="md:w-2/5">
-                <label for="uraian" class="label-control md:py-3">Uraian <span class="text-red-600">*</span></label>
-              </div>
-              <div class="md:w-3/5">
-                <Field id="uraian" name="uraian" v-model="uraian" label="Uraian" as="textarea" rules="required" rows="5" class="form-control" />
-                <ErrorMessage name="uraian" class="capitalize text-sm text-red-600" />
-                <div v-if="error.uraian" class="capitalize text-sm text-red-600"><span>{{ error.uraian[0] }}</span></div>
-              </div>
-            </div>
-            <div class="flex w-full mb-2 gap-2">
-              <div class="md:w-2/5">
-                <label for="kode_akun_persediaan" class="label-control md:py-3">Akun Persediaan <span class="text-red-600">*</span></label>
-              </div>
-              <div class="md:w-3/5">
-                <VueMultiselect id="kode_akun_persediaan" name="kode_akun_persediaan" ref="akunPersediaan" v-model="akunPersediaan" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun Persediaan">
-                  <template v-slot:caret>
-                    <div>
-                      <div class="multiselect__select">
-                        <span>
-                          <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                          </svg>
-                        </span>
+                        <div v-if="error.tanggal" class="capitalize text-sm text-red-600"><span>{{ error.tanggal[0] }}</span></div>
                       </div>
                     </div>
                   </template>
-                </VueMultiselect>
-                <ErrorMessage name="kode_akun_persediaan" class="capitalize text-sm text-red-600" />
-                <div v-if="error.kode_akun_persediaan" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun_persediaan[0] }}</span></div> 
+                </v-date-picker>                  
               </div>
+              <div class="w-1/2"></div>
             </div>
-            <div class="flex w-full mb-2 gap-2">
-              <div class="md:w-2/5">
-                <label for="kode_akun_penerimaan" class="label-control md:py-3">Akun Penerimaan <span class="text-red-600">*</span></label>
+          </div>
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="nominal" class="label-control md:py-3">Nominal <span class="text-red-600">*</span></label>
+            </div>
+            <div class="flex md:w-3/5">
+              <div class="w-1/2">
+                <Field id="nominal" name="nominal" v-model.lazy="nominal" v-number="number" label="Nominal" type="text" rules="" class="form-control" />
+                <ErrorMessage name="nominal" class="capitalize text-sm text-red-600" />
+                <div v-if="error.nominal" class="capitalize text-sm text-red-600"><span>{{ error.nominal[0] }}</span></div>                  
               </div>
-              <div class="md:w-3/5">
-                <VueMultiselect id="kode_akun_penerimaan" name="kode_akun_penerimaan" ref="akunPenerimaan" v-model="akunPenerimaan" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun Penerimaan">
-                  <template v-slot:caret>
-                    <div>
-                      <div class="multiselect__select">
-                        <span>
-                          <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                            <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                          </svg>
-                        </span>
-                      </div>
+              <div class="w-1/2"></div>
+            </div>
+          </div>            
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="uraian" class="label-control md:py-3">Uraian <span class="text-red-600">*</span></label>
+            </div>
+            <div class="md:w-3/5">
+              <Field id="uraian" name="uraian" v-model="uraian" label="Uraian" as="textarea" rules="required" rows="5" class="form-control" />
+              <ErrorMessage name="uraian" class="capitalize text-sm text-red-600" />
+              <div v-if="error.uraian" class="capitalize text-sm text-red-600"><span>{{ error.uraian[0] }}</span></div>
+            </div>
+          </div>
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="kode_akun_persediaan" class="label-control md:py-3">Akun Persediaan <span class="text-red-600">*</span></label>
+            </div>
+            <div class="md:w-3/5">
+              <VueMultiselect id="kode_akun_persediaan" name="kode_akun_persediaan" ref="akunPersediaan" v-model="akunPersediaan" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun Persediaan">
+                <template v-slot:caret>
+                  <div>
+                    <div class="multiselect__select">
+                      <span>
+                        <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
+                          <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
+                        </svg>
+                      </span>
                     </div>
-                  </template>
-                </VueMultiselect>
-                <ErrorMessage name="kode_akun_penerimaan" class="capitalize text-sm text-red-600" />
-                <div v-if="error.kode_akun_penerimaan" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun_penerimaan[0] }}</span></div> 
+                  </div>
+                </template>
+              </VueMultiselect>
+              <ErrorMessage name="kode_akun_persediaan" class="capitalize text-sm text-red-600" />
+              <div v-if="error.kode_akun_persediaan" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun_persediaan[0] }}</span></div> 
+            </div>
+          </div>
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="kode_akun_penerimaan" class="label-control md:py-3">Akun Penerimaan <span class="text-red-600">*</span></label>
+            </div>
+            <div class="md:w-3/5">
+              <VueMultiselect id="kode_akun_penerimaan" name="kode_akun_penerimaan" ref="akunPenerimaan" v-model="akunPenerimaan" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun Penerimaan">
+                <template v-slot:caret>
+                  <div>
+                    <div class="multiselect__select">
+                      <span>
+                        <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
+                          <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </template>
+              </VueMultiselect>
+              <ErrorMessage name="kode_akun_penerimaan" class="capitalize text-sm text-red-600" />
+              <div v-if="error.kode_akun_penerimaan" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun_penerimaan[0] }}</span></div> 
+            </div>
+          </div>
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="gambar" class="label-control md:py-3">Bukti Transaksi <span class="text-red-600">*</span></label>
+            </div>
+            <div class="md:w-3/5">
+              <div class="md:h-32 border border-dashed border-gray-400 flex items-center justify-center p-1 rounded-sm mb-2">
+                <img class="h-full" :src="image" />
               </div>
-            </div>                        
+              <input id="gambar" name="gambar" type="file" ref="gambar" @change="onFileChange" rules="image|ext:jpg,png" label="Gambar" />
+            </div>
           </div>
         </Form>     
       </template>
@@ -308,6 +317,8 @@ export default {
       akunPersediaan: '',
       akunPenerimaan: '',
       akunOptions: [],
+      image: '',
+      penjualanImage: '',
       isLoading: false,
       number: {
         decimal: '.',
@@ -460,6 +471,7 @@ export default {
           this.nominal = this.formatNumber(this.toFixed(this.record.nominal, 0))
           this.akunPersediaan = { kode_akun: this.record.kode_akun_persediaan, nama_akun: this.record.nama_akun_persediaan }
           this.akunPenerimaan = { kode_akun: this.record.kode_akun_penerimaan, nama_akun: this.record.nama_akun_penerimaan }
+          this.image = this.record.gambar
         } else {
           this.isLoading = false
 
@@ -480,6 +492,7 @@ export default {
         payload.append('uraian', this.uraian)
         payload.append('kode_akun_persediaan', this.akunPersediaan ? this.akunPersediaan.kode_akun : null)
         payload.append('kode_akun_penerimaan', this.akunPenerimaan ? this.akunPenerimaan.kode_akun : null)
+        payload.append('gambar', this.penjualanImage)
 
         let response = ''
         if (this.isEdit) {
@@ -539,7 +552,8 @@ export default {
       this.uraian = ''
       this.nominal = ''
       this.akunPersediaan = ''
-      this.akunPenerimaan = ''      
+      this.akunPenerimaan = ''
+      this.image = ''
     },
     updateQueryString() {
       const search = this.search ? this.search.toLowerCase() : ''
@@ -623,6 +637,27 @@ export default {
       this.clearHeader()
       this.penjualanId = id
       this.fetchDataById(id)
+    },
+    onFileChange(e) {
+      let files = e.target.files || e.dataTransfer.files
+      if (!files.length) {
+        return
+      }
+
+      this.createImage(files[0])
+    },
+    createImage(file) {
+      let reader = new FileReader()
+      let vm = this
+
+      reader.onload = (e) => {
+        vm.image = e.target.result
+      }
+      reader.readAsDataURL(file)
+      this.penjualanImage = this.$refs.gambar.files[0]
+    },
+    removeImage() {
+      this.image = ''
     },
   },
   created() {
