@@ -1,6 +1,6 @@
 <template>
   <nav class="px-1 pt-6 overflow-y-auto font-medium text-base sm:px-3 xl:px-5 lg:text-sm pb-10 lg:pt-10 lg:pb-14 h-screen bg-blue-600">
-    <ul>
+    <ul v-if="userData">
       <li class="mt-6">
         <span @click="toggleSidebar">
           <router-link :to="{ name: 'dashboard' }" class="nav-item">
