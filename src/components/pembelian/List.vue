@@ -173,7 +173,7 @@
           </div>
           <div class="flex w-full mb-2 gap-2">
             <div class="md:w-2/5">
-              <label for="kode_akun_persediaan" class="label-control md:py-3">Akun Persediaan <span class="text-red-600">*</span></label>
+              <label for="kode_akun_persediaan" class="label-control md:py-3">Akun Debet <span class="text-red-600">*</span></label>
             </div>
             <div class="md:w-3/5">
               <VueMultiselect id="kode_akun_persediaan" name="kode_akun_persediaan" ref="akunPersediaan" v-model="akunPersediaan" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun Persediaan">
@@ -195,7 +195,7 @@
           </div>
           <div class="flex w-full mb-2 gap-2">
             <div class="md:w-2/5">
-              <label for="kode_akun_pembayaran" class="label-control md:py-3">Akun Pembayaran <span class="text-red-600">*</span></label>
+              <label for="kode_akun_pembayaran" class="label-control md:py-3">Akun Kredit <span class="text-red-600">*</span></label>
             </div>
             <div class="md:w-3/5">
               <VueMultiselect id="kode_akun_pembayaran" name="kode_akun_pembayaran" ref="akunPembayaran" v-model="akunPembayaran" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun Pembayaran">
