@@ -149,29 +149,7 @@
           </div>
           <div class="flex w-full mb-2 gap-2">
             <div class="md:w-2/5">
-              <label for="kode_akun_persediaan" class="label-control md:py-3">Akun Persediaan <span class="text-red-600">*</span></label>
-            </div>
-            <div class="md:w-3/5">
-              <VueMultiselect id="kode_akun_persediaan" name="kode_akun_persediaan" ref="akunPersediaan" v-model="akunPersediaan" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun Persediaan">
-                <template v-slot:caret>
-                  <div>
-                    <div class="multiselect__select">
-                      <span>
-                        <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                          <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </template>
-              </VueMultiselect>
-              <ErrorMessage name="kode_akun_persediaan" class="capitalize text-sm text-red-600" />
-              <div v-if="error.kode_akun_persediaan" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun_persediaan[0] }}</span></div> 
-            </div>
-          </div>
-          <div class="flex w-full mb-2 gap-2">
-            <div class="md:w-2/5">
-              <label for="kode_akun_penerimaan" class="label-control md:py-3">Akun Penerimaan <span class="text-red-600">*</span></label>
+              <label for="kode_akun_penerimaan" class="label-control md:py-3">Akun Debet <span class="text-red-600">*</span></label>
             </div>
             <div class="md:w-3/5">
               <VueMultiselect id="kode_akun_penerimaan" name="kode_akun_penerimaan" ref="akunPenerimaan" v-model="akunPenerimaan" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun Penerimaan">
@@ -191,6 +169,28 @@
               <div v-if="error.kode_akun_penerimaan" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun_penerimaan[0] }}</span></div> 
             </div>
           </div>
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="kode_akun_persediaan" class="label-control md:py-3">Akun Kredit <span class="text-red-600">*</span></label>
+            </div>
+            <div class="md:w-3/5">
+              <VueMultiselect id="kode_akun_persediaan" name="kode_akun_persediaan" ref="akunPersediaan" v-model="akunPersediaan" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun Persediaan">
+                <template v-slot:caret>
+                  <div>
+                    <div class="multiselect__select">
+                      <span>
+                        <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
+                          <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </template>
+              </VueMultiselect>
+              <ErrorMessage name="kode_akun_persediaan" class="capitalize text-sm text-red-600" />
+              <div v-if="error.kode_akun_persediaan" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun_persediaan[0] }}</span></div> 
+            </div>
+          </div>          
           <div class="flex w-full mb-2 gap-2">
             <div class="md:w-2/5">
               <label for="gambar" class="label-control md:py-3">Bukti Transaksi <span class="text-red-600">*</span></label>
