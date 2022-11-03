@@ -35,10 +35,10 @@
             <tbody>
               <template v-if="jurnalUmum">
                 <tr v-if="jurnalUmum.length == 0"><td class="text-center" colspan="7">Tidak ada data yang dapat ditampilkan</td></tr>
-                <tr v-for="(item, index) in jurnalUmum" :key="item.id">
-                  <td class="bg-white text-gray-800 border-gray-200 text-left">{{ incrementIndex(index) }}</td>
-                  <td class="bg-white text-gray-800 border-gray-200 text-left">{{ formatedDate(item.tanggal) }}</td>
-                  <td class="bg-white text-gray-800 border-gray-200 text-left">{{ item.deskripsi}}</td>
+                <tr v-for="item in jurnalUmum" :key="item.id">
+                  <td class="bg-white text-gray-800 border-gray-200 text-left">{{ item.aktif ? incrementIndex(item.index) : null }}</td>
+                  <td class="bg-white text-gray-800 border-gray-200 text-left">{{ item.aktif ? formatedDate(item.tanggal) : null }}</td>
+                  <td class="bg-white text-gray-800 border-gray-200 text-left">{{ item.aktif ? item.deskripsi : null }}</td>
                   <td class="bg-white text-gray-800 border-gray-200 text-left">{{ item.kode_akun}}</td>
                   <td class="bg-white text-gray-800 border-gray-200 text-left">{{ item.nama_akun }}</td>
                   <td class="bg-white text-gray-800 border-gray-200 text-right">Rp. {{ formatNumber(toFixed(item.debet, 0)) }}</td>
@@ -52,6 +52,16 @@
               </template>
             </tbody>
           </table>
+          <div class="flex w-full mt-4">
+            <div class="w-1/4"></div>
+            <div class="w-1/4"></div>
+            <div class="w-2/4 text-center">
+              <span class="block text-sm">Mangupura, {{ formatedLongDate(currentDate) }}</span>
+              <span class="block text-sm">Perumda Pasar Mangu Giri Sedana</span>
+              <span class="block text-sm mb-8">Kepala Unit Bina Usaha</span>
+              <span class="text-sm underline">(Ni Rai Putri, SE)</span>
+            </div>
+          </div>          
         </div>
       </template>
       <template v-slot:footer>
@@ -77,6 +87,7 @@ import IconPrint from '../icons/IconPrint.vue'
 import IconDateRange from '../icons/IconDateRange.vue'
 import Modal from '../widgets/Modal.vue'
 import Logo from '../../assets/images/logo.png'
+dayjs.locale("id")
 
 export default {
   name: 'ModalLaporanJurnalUmum',
@@ -117,6 +128,7 @@ export default {
       jurnalUmum: [],
       grandTotalDebet: '',
       grandTotalKredit: '',
+      currentDate: new Date(),
       error: [],
       modalTitle: '',     
       showModal: false,
@@ -160,9 +172,9 @@ export default {
 
           this.jurnalUmum = []
           const records = response.data.data
-          records.forEach(itemJurnal => {
+          records.forEach((itemJurnal, parentIndex) => {
             const details = itemJurnal.details
-            details.forEach(item => {
+            details.forEach((item, index) => {
               this.jurnalUmum.push({
                 id: item.id,
                 jurnal: itemJurnal.no_jurnal,
@@ -171,7 +183,9 @@ export default {
                 kode_akun: item.kode_akun,
                 nama_akun: item.nama_akun,
                 debet: item.debet,
-                kredit: item.kredit
+                kredit: item.kredit,
+                aktif: index == 0 ? true : false,
+                index: parentIndex
               })
               this.grandTotalDebet = parseFloat(this.unformatNumber(this.toFixed(this.grandTotalDebet, 0))) + parseFloat(this.unformatNumber(this.toFixed(item.debet, 0)))
               this.grandTotalKredit = parseFloat(this.unformatNumber(this.toFixed(this.grandTotalKredit, 0))) + parseFloat(this.unformatNumber(this.toFixed(item.kredit, 0)))              
@@ -217,6 +231,9 @@ export default {
     formatedDate(date) {
       return dayjs(date).format("DD-MM-YYYY")
     },
+    formatedLongDate(date) {
+      return dayjs(date).format("DD MMMM YYYY")
+    },    
   },
   computed: {
     ...mapGetters({
