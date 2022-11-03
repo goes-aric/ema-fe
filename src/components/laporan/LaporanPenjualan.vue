@@ -48,13 +48,13 @@
             </tbody>                              
           </table>
           <div class="flex w-full mt-4">
-            <div class="w-1/3"></div>
-            <div class="w-1/3"></div>
-            <div class="w-1/3 text-center">
-              <span class="block mb-4">KA. UNIT PASAR UMUM BERINGKIT</span>
-              <span class="underline">(I PUTU RUDITA)</span>
-              <span class="block text-sm mb-8">KA. UNIT PASAR UMUM BERINGKIT</span>
-              <span class="text-sm underline">(I PUTU RUDITA)</span>
+            <div class="w-1/4"></div>
+            <div class="w-1/4"></div>
+            <div class="w-2/4 text-center">
+              <span class="block text-sm">Mangupura, {{ formatedLongDate(currentDate) }}</span>
+              <span class="block text-sm">Perumda Pasar Mangu Giri Sedana</span>
+              <span class="block text-sm mb-8">Kepala Unit Bina Usaha</span>
+              <span class="text-sm underline">(Ni Rai Putri, SE)</span>
             </div>
           </div>          
         </div>   
@@ -82,6 +82,7 @@ import IconPrint from '../icons/IconPrint.vue'
 import IconDateRange from '../icons/IconDateRange.vue'
 import Modal from '../widgets/Modal.vue'
 import Logo from '../../assets/images/logo.png'
+dayjs.locale("id")
 
 export default {
   name: 'ModalLaporanPenjualan',
@@ -121,6 +122,7 @@ export default {
       awaitingSearch: false,
       penjualan: [],
       grandTotal: '',
+      currentDate: new Date(),
       error: [],
       modalTitle: '',     
       showModal: false,
@@ -208,6 +210,9 @@ export default {
     formatedDate(date) {
       return dayjs(date).format("DD-MM-YYYY")
     },
+    formatedLongDate(date) {
+      return dayjs(date).format("DD MMMM YYYY")
+    },    
   },
   computed: {
     ...mapGetters({
