@@ -19,39 +19,78 @@
             <h2 class="font-medium uppercase">Laporan Neraca</h2>
             <h2 class="text-sm">Periode</h2>
             <span class="text-sm font-medium">{{ formatedDate(tanggalAwal) }} s/d {{ formatedDate(tanggalAkhir) }}</span>
-          </div>       
-          <table>
-            <thead>
-              <tr>
-                <th scope="col" class="bg-white text-gray-800 text-left">No</th>
-                <th scope="col" class="bg-white text-gray-800 text-left">Tanggal</th>
-                <th scope="col" class="bg-white text-gray-800 text-left">Deskripsi</th>
-                <th scope="col" class="bg-white text-gray-800 text-left">Kode</th>
-                <th scope="col" class="bg-white text-gray-800 text-left">Akun</th>
-                <th scope="col" class="bg-white text-gray-800 text-center">Debet</th>
-                <th scope="col" class="bg-white text-gray-800 text-center">Kredit</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template v-if="jurnalUmum">
-                <tr v-if="jurnalUmum.length == 0"><td class="text-center" colspan="7">Tidak ada data yang dapat ditampilkan</td></tr>
-                <tr v-for="(item, index) in jurnalUmum" :key="item.id">
-                  <td class="bg-white text-gray-800 border-gray-200 text-left">{{ incrementIndex(index) }}</td>
-                  <td class="bg-white text-gray-800 border-gray-200 text-left">{{ formatedDate(item.tanggal) }}</td>
-                  <td class="bg-white text-gray-800 border-gray-200 text-left">{{ item.deskripsi}}</td>
-                  <td class="bg-white text-gray-800 border-gray-200 text-left">{{ item.kode_akun}}</td>
-                  <td class="bg-white text-gray-800 border-gray-200 text-left">{{ item.nama_akun }}</td>
-                  <td class="bg-white text-gray-800 border-gray-200 text-right">Rp. {{ formatNumber(toFixed(item.debet, 0)) }}</td>
-                  <td class="bg-white text-gray-800 border-gray-200 text-right">Rp. {{ formatNumber(toFixed(item.kredit, 0)) }}</td>
-                </tr>
-                <tr class="border-b border-gray-200 bg-gray-50">
-                  <td class="bg-white text-gray-800 border-gray-200 text-left font-medium" colspan="5"><span class="font-medium">Grand Total</span></td>
-                  <td class="bg-white text-gray-800 border-gray-200 text-right font-medium"><span class="font-medium">Rp. {{ formatNumber(toFixed(this.grandTotalDebet, 0)) }}</span></td>
-                  <td class="bg-white text-gray-800 border-gray-200 text-right font-medium"><span class="font-medium">Rp. {{ formatNumber(toFixed(this.grandTotalKredit, 0)) }}</span></td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
+          </div>
+          <div class="flex border">
+            <div class="w-1/2 p-4 border-r">
+              <h2 class="text-sm font-semibold border-b text-center pb-2">AKTIVA</h2>
+              <div v-for="akun in dataAktiva" :key="akun.kode_akun" class="text-sm">
+                <h3 class="py-2 font-medium uppercase">{{ akun.nama_akun }}</h3>
+                <template v-for="item in akun.transaksi" :key="item.kode_akun">
+                  <div class="flex pb-2">
+                    <div class="w-1/2">{{ item.nama_akun }}</div>
+                    <div class="w-1/2 text-right">{{ (item.debet-item.kredit) < 0 ? '(' + formatNumber(toFixed(item.debet-item.kredit, 0)) + ')' : formatNumber(toFixed(item.debet-item.kredit, 0)) }}</div>
+                  </div>
+                </template>
+                <div class="flex font-medium pb-2">
+                  <div class="w-1/2">Jumlah {{ akun.nama_akun }}</div>
+                  <div class="w-1/2 border-t text-right">{{ formatNumber(toFixed(akun.total, 0)) }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="w-1/2 p-4">
+              <h2 class="text-sm font-semibold border-b text-center pb-2">KEWAJIBAN + EKUITAS</h2>
+              <div v-for="akun in dataKewajiban" :key="akun.kode_akun" class="text-sm">
+                <h3 class="py-2 font-semibold uppercase">{{ akun.nama_akun }}</h3>
+                <template v-for="item in akun.transaksi" :key="item.kode_akun">
+                  <div class="flex pb-2">
+                    <div class="w-1/2">{{ item.nama_akun }}</div>
+                    <div class="w-1/2 text-right">{{ (item.kredit-item.debet) < 0 ? '(' + formatNumber(toFixed(item.kredit-item.debet, 0)) + ')' : formatNumber(toFixed(item.kredit-item.debet, 0)) }}</div>
+                  </div>
+                </template>
+                <div class="flex font-medium pb-2">
+                  <div class="w-1/2">Jumlah {{ akun.nama_akun }}</div>
+                  <div class="w-1/2 border-t text-right">{{ formatNumber(toFixed(akun.total, 0)) }}</div>
+                </div>                
+              </div>
+              <div v-for="akun in dataEkuitas" :key="akun.kode_akun" class="text-sm">
+                <h3 class="py-2 font-semibold uppercase">{{ akun.nama_akun }}</h3>
+                <template v-for="item in akun.transaksi" :key="item.kode_akun">
+                  <div class="flex pb-2">
+                    <div class="w-1/2">{{ item.nama_akun }}</div>
+                    <div class="w-1/2 text-right">{{ (item.kredit-item.debet) < 0 ? '(' + formatNumber(toFixed(item.kredit-item.debet, 0)) + ')' : formatNumber(toFixed(item.kredit-item.debet, 0)) }}</div>
+                  </div>
+                </template>
+                <div class="flex font-medium pb-2">
+                  <div class="w-1/2">Jumlah {{ akun.nama_akun }}</div>
+                  <div class="w-1/2 border-t text-right">{{ formatNumber(toFixed(akun.total, 0)) }}</div>
+                </div>                
+              </div>              
+            </div>
+          </div>
+          <div class="flex border text-sm font-semibold">
+            <div class="w-1/2 p-4 border-r">
+              <div class="flex">
+                <div class="w-1/2">Total Nilai Aktiva</div>
+                <div class="w-1/2 text-right">{{ formatNumber(toFixed(this.totalAktiva, 0)) }}</div>
+              </div>
+            </div>
+            <div class="w-1/2 p-4 border-r">
+              <div class="flex">
+                <div class="w-1/2">Total Nilai Kewajiban + Ekuitas</div>
+                <div class="w-1/2 text-right">{{ formatNumber(toFixed((this.totalKewajiban + this.totalEkuitas), 0)) }}</div>
+              </div>              
+            </div>
+          </div>
+          <div class="flex w-full mt-4">
+            <div class="w-1/4"></div>
+            <div class="w-1/4"></div>
+            <div class="w-2/4 text-center">
+              <span class="block text-sm">Mangupura, {{ formatedLongDate(currentDate) }}</span>
+              <span class="block text-sm">Perumda Pasar Mangu Giri Sedana</span>
+              <span class="block text-sm mb-8">Kepala Unit Bina Usaha</span>
+              <span class="text-sm underline">(Ni Rai Putri, SE)</span>
+            </div>
+          </div>          
         </div>
       </template>
       <template v-slot:footer>
@@ -69,7 +108,7 @@ import format from '@/helpers/formatNumber'
 import { createToastInterface } from 'vue-toastification'
 import _ from 'lodash'
 import dayjs from 'dayjs'
-import jurnalServices from '@/services/jurnal/jurnalServices'
+import neracaServices from '@/services/laporan/neracaServices'
 import IconPlus from '../icons/IconPlus.vue'
 import IconTrash from '../icons/IconTrash.vue'
 import IconEdit from '../icons/IconEdit.vue'
@@ -77,9 +116,10 @@ import IconPrint from '../icons/IconPrint.vue'
 import IconDateRange from '../icons/IconDateRange.vue'
 import Modal from '../widgets/Modal.vue'
 import Logo from '../../assets/images/logo.png'
+dayjs.locale("id")
 
 export default {
-  name: 'ModalLaporanJurnalUmum',
+  name: 'ModalLaporanNeraca',
   components: { 
     IconPlus,
     IconTrash,
@@ -114,9 +154,13 @@ export default {
       tanggalAwal: '',
       tanggalAkhir: '',
       awaitingSearch: false,
-      jurnalUmum: [],
-      grandTotalDebet: '',
-      grandTotalKredit: '',
+      dataAktiva: [],
+      totalAktiva: 0,
+      dataKewajiban: [],
+      totalKewajiban: 0,
+      dataEkuitas: [],
+      totalEkuitas: 0,
+      currentDate: new Date(),
       error: [],
       modalTitle: '',     
       showModal: false,
@@ -146,37 +190,39 @@ export default {
     }
   },
   methods: {
-    async fetchData(props) {
+    async fetchDataAktiva(props) {
       try {
         this.isLoading = true
 
         const params = {
           start: dayjs(props.tanggal_awal).format("YYYY/MM/DD"),
-          end: dayjs(props.tanggal_akhir).format("YYYY/MM/DD")
+          end: dayjs(props.tanggal_akhir).format("YYYY/MM/DD"),
+          tipe: 'AKTIVA'
         }        
-        const response = await jurnalServices.fetchAll(params)
+        const response = await neracaServices.fetchDataAccTransaction(params)
         if (response.data.status === 'success') {
           this.isLoading =false
-
-          this.jurnalUmum = []
           const records = response.data.data
-          records.forEach(itemJurnal => {
-            const details = itemJurnal.details
-            details.forEach(item => {
-              this.jurnalUmum.push({
-                id: item.id,
-                jurnal: itemJurnal.no_jurnal,
-                tanggal: itemJurnal.tanggal_transaksi,
-                deskripsi: itemJurnal.deskripsi,
-                kode_akun: item.kode_akun,
-                nama_akun: item.nama_akun,
-                debet: item.debet,
-                kredit: item.kredit
-              })
-              this.grandTotalDebet = parseFloat(this.unformatNumber(this.toFixed(this.grandTotalDebet, 0))) + parseFloat(this.unformatNumber(this.toFixed(item.debet, 0)))
-              this.grandTotalKredit = parseFloat(this.unformatNumber(this.toFixed(this.grandTotalKredit, 0))) + parseFloat(this.unformatNumber(this.toFixed(item.kredit, 0)))              
+          this.dataAktiva = []
+          let total = 0
+          records.forEach(akun => {
+            let totalItem = 0
+            let transaksi = []
+            akun.transaksi.forEach(item => {
+              transaksi.push(item)
+              totalItem += (parseFloat(item.debet) - parseFloat(item.kredit))
             })
+            this.dataAktiva.push({
+              kode_akun: akun.kode_akun,
+              nama_akun: akun.nama_akun,
+              akun_utama: akun.akun_utama,
+              tipe_akun: akun.tipe_akun,
+              transaksi: transaksi,
+              total: totalItem
+            })
+            total += parseFloat(totalItem)
           })
+          this.totalAktiva = total
         } else {
           this.isLoading =false
 
@@ -188,6 +234,94 @@ export default {
         console.log(error.message)
       }
     },
+    async fetchDataKewajiban(props) {
+      try {
+        this.isLoading = true
+
+        const params = {
+          start: dayjs(props.tanggal_awal).format("YYYY/MM/DD"),
+          end: dayjs(props.tanggal_akhir).format("YYYY/MM/DD"),
+          tipe: 'KEWAJIBAN'
+        }
+        const response = await neracaServices.fetchDataAccTransaction(params)
+        if (response.data.status === 'success') {
+          this.isLoading =false
+          const records = response.data.data
+          this.dataKewajiban = []
+          let total = 0
+          records.forEach(akun => {
+            let totalItem = 0
+            let transaksi = []
+            akun.transaksi.forEach(item => {
+              transaksi.push(item)
+              totalItem += (parseFloat(item.kredit) - parseFloat(item.debet))
+            })
+            this.dataKewajiban.push({
+              kode_akun: akun.kode_akun,
+              nama_akun: akun.nama_akun,
+              akun_utama: akun.akun_utama,
+              tipe_akun: akun.tipe_akun,
+              transaksi: transaksi,
+              total: totalItem
+            })
+            total += parseFloat(totalItem)
+          })
+          this.totalKewajiban = total
+        } else {
+          this.isLoading =false
+
+          /* THROW ERROR MESSAGES */
+          this.toast.error(response.data.message)          
+        }
+      } catch (error) {
+        this.isLoading =false
+        console.log(error.message)
+      }
+    },
+    async fetchDataEkuitas(props) {
+      try {
+        this.isLoading = true
+
+        const params = {
+          start: dayjs(props.tanggal_awal).format("YYYY/MM/DD"),
+          end: dayjs(props.tanggal_akhir).format("YYYY/MM/DD"),
+          tipe: 'EKUITAS'
+        }        
+        const response = await neracaServices.fetchDataAccTransaction(params)
+        if (response.data.status === 'success') {
+          this.isLoading =false
+          const records = response.data.data
+          this.dataEkuitas = []
+          let total = 0
+          records.forEach(akun => {
+            let totalItem = 0
+            let transaksi = []
+            akun.transaksi.forEach(item => {
+              transaksi.push(item)
+              totalItem += (parseFloat(item.kredit) - parseFloat(item.debet))
+            })
+            this.dataEkuitas.push({
+              kode_akun: akun.kode_akun,
+              nama_akun: akun.nama_akun,
+              akun_utama: akun.akun_utama,
+              tipe_akun: akun.tipe_akun,
+              transaksi: transaksi,
+              total: totalItem
+            })
+            total += parseFloat(totalItem)
+          })
+          this.totalEkuitas = total
+        } else {
+          this.isLoading =false
+
+          /* THROW ERROR MESSAGES */
+          this.toast.error(response.data.message)          
+        }
+      } catch (error) {
+        this.isLoading =false
+        console.log(error.message)
+      }
+    },        
     formatNumber(num) {
       let result = format.formatNumber(num)
       return result
@@ -209,14 +343,19 @@ export default {
       this.tanggalAwal = props.tanggal_awal
       this.tanggalAkhir = props.tanggal_akhir
       this.modalTitle = 'Laporan Neraca'
-      this.fetchData(props)
+      this.fetchDataAktiva(props)
+      this.fetchDataKewajiban(props)
+      this.fetchDataEkuitas(props)
     },
     incrementIndex(key) {
       return key + 1
-    },
+    },      
     formatedDate(date) {
       return dayjs(date).format("DD-MM-YYYY")
     },
+    formatedLongDate(date) {
+      return dayjs(date).format("DD MMMM YYYY")
+    },    
   },
   computed: {
     ...mapGetters({

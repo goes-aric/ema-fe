@@ -381,7 +381,7 @@ export default {
           tanggal_awal: this.neracaFilterDate ? this.neracaFilterDate.start : null,
           tanggal_akhir: this.neracaFilterDate ? this.neracaFilterDate.end : null,
         }
-        this.$refs.laporanJurnalUmum.toggleModal(params)
+        this.$refs.laporanNeraca.toggleModal(params)
       }
     },
     toggleLaporanLabaRugi() {
@@ -393,7 +393,7 @@ export default {
           tanggal_awal: this.labaRugiFilterDate ? this.labaRugiFilterDate.start : null,
           tanggal_akhir: this.labaRugiFilterDate ? this.labaRugiFilterDate.end : null,
         }
-        this.$refs.laporanJurnalUmum.toggleModal(params)
+        this.$refs.laporanLabaRugi.toggleModal(params)
       }
     },
     toggleLaporanArusKas() {
@@ -405,7 +405,7 @@ export default {
           tanggal_awal: this.kasFilterDate ? this.kasFilterDate.start : null,
           tanggal_akhir: this.kasFilterDate ? this.kasFilterDate.end : null,
         }
-        this.$refs.laporanJurnalUmum.toggleModal(params)
+        this.$refs.LaporanArusKas.toggleModal(params)
       }
     },
     toggleLaporanPerubahanModal() {
@@ -417,7 +417,7 @@ export default {
           tanggal_awal: this.modalFilterDate ? this.modalFilterDate.start : null,
           tanggal_akhir: this.modalFilterDate ? this.modalFilterDate.end : null,
         }
-        this.$refs.laporanJurnalUmum.toggleModal(params)
+        this.$refs.LaporanPerubahanModal.toggleModal(params)
       }
     },                    
   },
