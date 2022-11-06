@@ -644,7 +644,7 @@ export default {
         const option = this.sortFields.filter(item => sort_field.includes(item.field))
         this.sortField = { field: option[0].field, name: option[0].name }          
         } catch (error) {
-          this.sortField = { field: 'kode_akun', name: 'Kode Akun' }
+          this.sortField = { field: 'id', name: 'ID (Bawaan)' }
         }
       },
       immediate: true
