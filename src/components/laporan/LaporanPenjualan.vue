@@ -158,7 +158,9 @@ export default {
 
         const params = {
           start: dayjs(props.tanggal_awal).format("YYYY/MM/DD"),
-          end: dayjs(props.tanggal_akhir).format("YYYY/MM/DD")
+          end: dayjs(props.tanggal_akhir).format("YYYY/MM/DD"),
+          sort_field: 'tanggal',
+          sort_option: 'ASC'
         }        
         const response = await penjualanServices.fetchAll(params)
         if (response.data.status === 'success') {
