@@ -209,7 +209,14 @@ export default {
             let totalItem = 0
             let transaksi = []
             akun.transaksi.forEach(item => {
-              transaksi.push(item)
+              const find = transaksi.filter(data => data.kode_akun == item.kode_akun)
+              const index = transaksi.findIndex(data => data.kode_akun == item.kode_akun)
+              if (find.length == 0) {
+                transaksi.push(item)
+              } else {
+                transaksi[index].debet = parseFloat(transaksi[index].debet) + parseFloat(item.debet)
+                transaksi[index].kredit = parseFloat(transaksi[index].kredit) + parseFloat(item.kredit)
+              }             
               totalItem += (parseFloat(item.debet) - parseFloat(item.kredit))
             })
             this.dataAktiva.push({
@@ -253,8 +260,15 @@ export default {
             let totalItem = 0
             let transaksi = []
             akun.transaksi.forEach(item => {
-              transaksi.push(item)
-              totalItem += (parseFloat(item.kredit) - parseFloat(item.debet))
+              const find = transaksi.filter(data => data.kode_akun == item.kode_akun)
+              const index = transaksi.findIndex(data => data.kode_akun == item.kode_akun)
+              if (find.length == 0) {
+                transaksi.push(item)
+              } else {
+                transaksi[index].debet = parseFloat(transaksi[index].debet) + parseFloat(item.debet)
+                transaksi[index].kredit = parseFloat(transaksi[index].kredit) + parseFloat(item.kredit)
+              }             
+              totalItem += (parseFloat(item.debet) - parseFloat(item.kredit))
             })
             this.dataKewajiban.push({
               kode_akun: akun.kode_akun,
@@ -297,8 +311,15 @@ export default {
             let totalItem = 0
             let transaksi = []
             akun.transaksi.forEach(item => {
-              transaksi.push(item)
-              totalItem += (parseFloat(item.kredit) - parseFloat(item.debet))
+              const find = transaksi.filter(data => data.kode_akun == item.kode_akun)
+              const index = transaksi.findIndex(data => data.kode_akun == item.kode_akun)
+              if (find.length == 0) {
+                transaksi.push(item)
+              } else {
+                transaksi[index].debet = parseFloat(transaksi[index].debet) + parseFloat(item.debet)
+                transaksi[index].kredit = parseFloat(transaksi[index].kredit) + parseFloat(item.kredit)
+              }             
+              totalItem += (parseFloat(item.debet) - parseFloat(item.kredit))
             })
             this.dataEkuitas.push({
               kode_akun: akun.kode_akun,

@@ -100,38 +100,6 @@
         </div>
       </div>
       <div class="w-1/2 p-6 rounded-sm bg-white shadow-lg">
-        <h1 class="text-center mb-2">Laporan Neraca</h1>
-        <div class="flex items-center gap-4">
-          <v-date-picker ref="calendar" v-model="neracaFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
-            <template v-slot="{ inputValue, inputEvents, isDragging }">
-              <div class="flex gap-2">
-                <div class="w-1/2 mb-4">
-                  <div class="relative flex justify-between items-center">
-                    <input id="startDate" ref="startDate" type="text" class="form-control" :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.start" v-on="inputEvents.start" autofocus readonly>
-                    <span class="h-full absolute pointer-events-none right-0">
-                      <IconDateRange class="m-3" />
-                    </span>
-                  </div>
-                </div>
-                <div class="w-1/2 mb-4">
-                  <div class="relative flex justify-between items-center">
-                    <input id="endDate" ref="endDate" type="text" class="form-control" :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.end" v-on="inputEvents.end" readonly>
-                    <span class="h-full absolute pointer-events-none right-0">
-                      <IconDateRange class="m-3" />
-                    </span>                      
-                  </div>
-                </div>                  
-              </div>
-            </template>
-          </v-date-picker>
-          <div class="flex -mt-4 gap-2">
-            <button type="button" class="btn btn--success" @click="toggleLaporanNeraca()">Tampilkan</button>
-          </div>
-        </div>
-      </div>      
-    </div>
-    <div class="flex w-full mb-4 gap-4">
-      <div class="w-1/2 p-6 rounded-sm bg-white shadow-lg">
         <h1 class="text-center mb-2">Laporan Laba Rugi</h1>
         <div class="flex items-center gap-4">
           <v-date-picker ref="calendar" v-model="labaRugiFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
@@ -158,6 +126,38 @@
           </v-date-picker>
           <div class="flex -mt-4 gap-2">
             <button type="button" class="btn btn--success" @click="toggleLaporanLabaRugi()">Tampilkan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flex w-full mb-4 gap-4">
+      <div class="w-1/2 p-6 rounded-sm bg-white shadow-lg">
+        <h1 class="text-center mb-2">Laporan Neraca</h1>
+        <div class="flex items-center gap-4">
+          <v-date-picker ref="calendar" v-model="neracaFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
+            <template v-slot="{ inputValue, inputEvents, isDragging }">
+              <div class="flex gap-2">
+                <div class="w-1/2 mb-4">
+                  <div class="relative flex justify-between items-center">
+                    <input id="startDate" ref="startDate" type="text" class="form-control" :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.start" v-on="inputEvents.start" autofocus readonly>
+                    <span class="h-full absolute pointer-events-none right-0">
+                      <IconDateRange class="m-3" />
+                    </span>
+                  </div>
+                </div>
+                <div class="w-1/2 mb-4">
+                  <div class="relative flex justify-between items-center">
+                    <input id="endDate" ref="endDate" type="text" class="form-control" :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.end" v-on="inputEvents.end" readonly>
+                    <span class="h-full absolute pointer-events-none right-0">
+                      <IconDateRange class="m-3" />
+                    </span>                      
+                  </div>
+                </div>                  
+              </div>
+            </template>
+          </v-date-picker>
+          <div class="flex -mt-4 gap-2">
+            <button type="button" class="btn btn--success" @click="toggleLaporanNeraca()">Tampilkan</button>
           </div>
         </div>
       </div>
