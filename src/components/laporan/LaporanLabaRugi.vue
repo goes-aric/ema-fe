@@ -56,7 +56,7 @@
             <div class="w-full p-4 border-r">
               <div class="flex">
                 <div class="w-1/2">Laba/Rugi Usaha</div>
-                <div class="w-1/2 text-right">{{ calculateLabaRugi() > 0 ? formatNumber(toFixed(calculateLabaRugi(), 0)) : '('+calculateLabaRugi()+')' }}</div>
+                <div class="w-1/2 text-right">{{ calculateLabaRugi() > 0 ? formatNumber(toFixed(calculateLabaRugi(), 0)) : '('+formatNumber(toFixed(calculateLabaRugi(), 0))+')' }}</div>
               </div>
             </div>
           </div>
