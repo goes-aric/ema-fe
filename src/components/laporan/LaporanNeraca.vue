@@ -360,6 +360,7 @@ export default {
     },
     toggleModal(props) {
       this.error = []
+      this.clearData()
       this.showModal = true
       this.tanggalAwal = props.tanggal_awal
       this.tanggalAkhir = props.tanggal_akhir
@@ -368,6 +369,14 @@ export default {
       this.fetchDataKewajiban(props)
       this.fetchDataEkuitas(props)
     },
+    clearData() {
+      this.dataAktiva = []
+      this.dataKewajiban = []
+      this.dataEkuitas = []
+      this.totalAktiva = 0
+      this.totalKewajiban = 0
+      this.totalEkuitas = 0
+    },    
     incrementIndex(key) {
       return key + 1
     },      
