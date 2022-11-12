@@ -224,6 +224,8 @@
                 <img class="h-full" :src="image" />
               </div>
               <input id="gambar" name="gambar" type="file" ref="gambar" @change="onFileChange" rules="image|ext:jpg,png" label="Gambar" />
+              <ErrorMessage name="gambar" class="capitalize text-sm text-red-600" />
+              <div v-if="error.gambar" class="capitalize text-sm text-red-600"><span>{{ error.gambar[0] }}</span></div>              
             </div>
           </div>
         </Form>     
