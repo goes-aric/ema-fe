@@ -142,6 +142,44 @@
             </VueMultiselect>
             <ErrorMessage name="tipe_akun" class="capitalize text-sm text-red-600" />
             <div v-if="error.tipe_akun" class="capitalize text-sm text-red-600"><span>{{ error.tipe_akun[0] }}</span></div>
+          </div>
+          <div class="flex gap-4">
+            <div class="w-full mb-4">
+              <label for="setara_kas" class="label-control">Setara Kas ? <span class="text-red-600">*</span></label>
+              <VueMultiselect id="setara_kas" name="setara_kas" ref="setaraKas" v-model="setaraKas" track-by="id" label="name" :options="setaraKasOptions" :showLabels="false" placeholder="Pilih Setara Kas">
+                <template v-slot:caret>
+                  <div>
+                    <div class="multiselect__select">
+                      <span>
+                        <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
+                          <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </template>            
+              </VueMultiselect>
+              <ErrorMessage name="setara_kas" class="capitalize text-sm text-red-600" />
+              <div v-if="error.setara_kas" class="capitalize text-sm text-red-600"><span>{{ error.setara_kas[0] }}</span></div>
+            </div>
+            <div class="w-full mb-4">
+              <label for="arus_kas_tipe" class="label-control">Arus Kas Tipe <span class="text-red-600">*</span></label>
+              <VueMultiselect id="arus_kas_tipe" name="arus_kas_tipe" ref="arusKasTipe" v-model="arusKasTipe" track-by="id" label="name" :options="arusKasTipeOptions" :showLabels="false" placeholder="Pilih Arus Kas Tipe">
+                <template v-slot:caret>
+                  <div>
+                    <div class="multiselect__select">
+                      <span>
+                        <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
+                          <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </template>            
+              </VueMultiselect>
+              <ErrorMessage name="arus_kas_tipe" class="capitalize text-sm text-red-600" />
+              <div v-if="error.arus_kas_tipe" class="capitalize text-sm text-red-600"><span>{{ error.arus_kas_tipe[0] }}</span></div>
+            </div>            
           </div>          
         </Form>     
       </template>
@@ -255,7 +293,18 @@ export default {
       tipeAkun: '',
       tipeAkunOptions: [
         { id: '1-', name: 'AKTIVA' }, { id: '2-', name: 'KEWAJIBAN' }, { id: '3-', name: 'EKUITAS' }, { id: '4-', name: 'PENDAPATAN' }, { id: '5-', name: 'BEBAN' }
-      ],      
+      ],
+      setaraKas: '',
+      setaraKasOptions: [
+        { id: 1, name: 'YA' },
+        { id: null, name: 'TIDAK' }
+      ],
+      arusKasTipe: '',
+      arusKasTipeOptions: [
+        { id: "operasional", name: "Operasional" }, 
+        { id: "investasi", name: "Investasi" },
+        { id: "pendanaan", name: "Pendanaan" }
+      ],
       isLoading: false,
     }
   },
@@ -397,6 +446,8 @@ export default {
           this.namaAkun = this.record.nama_akun
           this.akunUtama = this.record.induk ? { id: this.record.akun_utama, name: this.record.induk.nama_akun } : ''
           this.tipeAkun = { id: this.record.tipe_akun_id, name: this.record.tipe_akun }
+          this.setaraKas = this.record.arus_kas ? { id: this.record.arus_kas, name: 'YA' } : { id: null, name: 'TIDAK' }
+          this.arusKasTipe = this.record.arus_kas_tipe ? { id: this.record.arus_kas_tipe, name: this.record.arus_kas_tipe_text } : ''
         } else {
           this.isLoading = false
 
@@ -415,7 +466,9 @@ export default {
           kode_akun: this.tipe + '' + this.kodeAkun,
           nama_akun: this.namaAkun,
           akun_utama: this.akunUtama ? this.akunUtama.id : null,
-          tipe_akun: this.tipeAkun ? this.tipeAkun.name : null
+          tipe_akun: this.tipeAkun ? this.tipeAkun.name : null,
+          setara_kas: this.setaraKas ? this.setaraKas.id : null,
+          arus_kas_tipe: this.arusKasTipe ? this.arusKasTipe.id : null
         }
         let response = ''
         if (this.isEdit) {
@@ -479,7 +532,9 @@ export default {
       this.kodeAkun = ''
       this.namaAkun = ''
       this.akunUtama = ''
-      this.tipeAkun = ''      
+      this.tipeAkun = '' 
+      this.setaraKas = { id: null, name: 'TIDAK' }
+      this.arusKasTipe = ''     
     },
     updateQueryString() {
       const search = this.search ? this.search.toLowerCase() : ''
