@@ -90,14 +90,14 @@ export default {
           text: 'Grafik Pembelian'
         },
         subtitle: {
-          text: 'Sumber: Data Pembelian Persediaan'
+          text: 'Sumber: Data Pembelian'
         },
         xAxis: {
           categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Ags', 'Sep', 'Okt', 'Nop', 'Des']
         },
         yAxis: {
           title: {
-            text: 'Jumlah Pendapatan'
+            text: 'Jumlah Pembelian'
           },
         },
         tooltip: {
