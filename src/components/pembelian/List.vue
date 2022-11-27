@@ -2,7 +2,7 @@
   <div>
     <div class="breadcrumb flex justify-between">
       <div class="w-full md:w-1/2 flex items-baseline gap-4">
-        <h1 class="text-2xl bottom-0">Pembelian Persediaan</h1>
+        <h1 class="text-2xl bottom-0">DATA PEMBELIAN</h1>
       </div>
       <div class="flex items-center right-0 gap-2">
         <button type="button" class="btn btn--success flex" @click="toggleNew()">
@@ -176,7 +176,7 @@
               <label for="kode_akun_persediaan" class="label-control md:py-3">Akun Debet <span class="text-red-600">*</span></label>
             </div>
             <div class="md:w-3/5">
-              <VueMultiselect id="kode_akun_persediaan" name="kode_akun_persediaan" ref="akunPersediaan" v-model="akunPersediaan" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun Persediaan">
+              <VueMultiselect id="kode_akun_persediaan" name="kode_akun_persediaan" ref="akunPersediaan" v-model="akunPersediaan" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun">
                 <template v-slot:caret>
                   <div>
                     <div class="multiselect__select">
@@ -198,7 +198,7 @@
               <label for="kode_akun_pembayaran" class="label-control md:py-3">Akun Kredit <span class="text-red-600">*</span></label>
             </div>
             <div class="md:w-3/5">
-              <VueMultiselect id="kode_akun_pembayaran" name="kode_akun_pembayaran" ref="akunPembayaran" v-model="akunPembayaran" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun Pembayaran">
+              <VueMultiselect id="kode_akun_pembayaran" name="kode_akun_pembayaran" ref="akunPembayaran" v-model="akunPembayaran" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun">
                 <template v-slot:caret>
                   <div>
                     <div class="multiselect__select">
