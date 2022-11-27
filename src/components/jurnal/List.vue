@@ -108,21 +108,35 @@
                   <label for="tanggal" class="label-control md:py-3">Tanggal <span class="text-red-600">*</span></label>
                 </div>
                 <div class="w-full md:w-3/5 mb-2">
-                  <v-date-picker v-model="tanggal" mode="date" :masks="masks" color="purple" title-position="left" :attributes="attrs">
-                    <template v-slot="{ inputValue, inputEvents }">
-                      <div class="md:flex gap-6">
-                        <div class="w-full">
-                          <div class="relative flex justify-between items-center">
-                            <input id="tanggal" type="text" class="form-control" :value="inputValue" v-on="inputEvents">
-                            <span class="h-full absolute pointer-events-none right-0">
-                              <IconDateRange class="m-3" />
-                            </span>                      
-                          </div>
-                          <div v-if="error.tanggal" class="capitalize text-sm text-red-600"><span>{{ error.tanggal[0] }}</span></div>
+                  <template v-if="isShow">
+                    <div class="md:flex gap-6">
+                      <div class="w-full">
+                        <div class="relative flex justify-between items-center">
+                          <input id="tanggal" type="text" class="form-control" :value="tanggal" readonly>
+                          <span class="h-full absolute pointer-events-none right-0">
+                            <IconDateRange class="m-3" />
+                          </span>                      
                         </div>
                       </div>
-                    </template>
-                  </v-date-picker>
+                    </div>
+                  </template>
+                  <template v-else>
+                    <v-date-picker v-model="tanggal" mode="date" :masks="masks" color="purple" title-position="left" :attributes="attrs">
+                      <template v-slot="{ inputValue, inputEvents }">
+                        <div class="md:flex gap-6">
+                          <div class="w-full">
+                            <div class="relative flex justify-between items-center">
+                              <input id="tanggal" type="text" class="form-control" :value="inputValue" v-on="inputEvents" readonly>
+                              <span class="h-full absolute pointer-events-none right-0">
+                                <IconDateRange class="m-3" />
+                              </span>                      
+                            </div>
+                            <div v-if="error.tanggal" class="capitalize text-sm text-red-600"><span>{{ error.tanggal[0] }}</span></div>
+                          </div>
+                        </div>
+                      </template>
+                    </v-date-picker>
+                  </template>
                 </div>                
               </div>
               <div class="flex w-full gap-2">
@@ -133,7 +147,7 @@
                   <div class="h-32 border border-dashed border-gray-400 items-center justify-center p-1 rounded-sm mb-2">
                     <img class="h-full" :src="image" />
                   </div>
-                  <input id="gambar" name="gambar" type="file" ref="gambar" @change="onFileChange" rules="image|ext:jpg,png" label="Gambar" />
+                  <input v-if="!isShow" id="gambar" name="gambar" type="file" ref="gambar" @change="onFileChange" rules="image|ext:jpg,png" label="Gambar" />
                   <ErrorMessage name="gambar" class="capitalize text-sm text-red-600" />
                   <div v-if="error.gambar" class="capitalize text-sm text-red-600"><span>{{ error.gambar[0] }}</span></div>
                 </div>
@@ -144,14 +158,14 @@
                 <label for="deskripsi" class="label-control md:py-3">Deskripsi <span class="text-red-600">*</span></label>
               </div>
               <div class="w-full md:w-3/4 mb-2">
-                <Field id="deskripsi" name="deskripsi" v-model="deskripsi" label="Deskripsi" as="textarea" rules="required" class="form-control" />
+                <Field id="deskripsi" name="deskripsi" v-model="deskripsi" label="Deskripsi" as="textarea" rules="required" class="form-control" :disabled="isShow" />
                 <ErrorMessage name="deskripsi" class="capitalize text-sm text-red-600" />
                 <div v-if="error.deskripsi" class="capitalize text-sm text-red-600"><span>{{ error.deskripsi[0] }}</span></div>
               </div>
             </div>
           </div>
           <div class="w-full mb-4">
-            <div class="flex gap-2">
+            <div class="flex gap-2" v-if="!isShow">
               <div class="w-full md:w-7/12 mb-2">
                 <label for="akun" class="label-control">Akun <span class="text-red-600">*</span></label>
                 <VueMultiselect id="akun" name="akun" ref="akun" v-model="akun" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="id" :custom-label="nameWithId" placeholder="Pilih Akun">
@@ -183,7 +197,7 @@
                 <div v-if="error.kredit" class="capitalize text-sm text-red-600"><span>{{ error.kredit[0] }}</span></div>                
               </div>
               <div class="w-1/5 md:w-1/12 mb-2">
-                <button v-if="!isShow" type="button" class="btn btn--success mt-6 flex" @click="addDetail()">
+                <button type="button" class="btn btn--success mt-6 flex" @click="addDetail()">
                   <IconPlus />
                 </button>
               </div>
@@ -217,7 +231,7 @@
                   <td class="text-left font-medium" colspan="2"><span class="font-medium">TOTAL</span></td>
                   <td class="text-right font-medium"><span class="font-medium">{{ formatNumber(this.totalDebet) }}</span></td>
                   <td class="text-right font-medium"><span class="font-medium">{{ formatNumber(this.totalKredit) }}</span></td>
-                  <td class="text-center"></td>
+                  <td class="text-center" v-if="!isShow"></td>
                 </tr>
               </tbody>
             </table>
