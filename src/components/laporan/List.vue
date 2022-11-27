@@ -2,7 +2,7 @@
   <div>
     <div class="breadcrumb flex justify-between">
       <div class="w-full md:w-1/2 flex items-baseline gap-4">
-        <h1 class="text-2xl bottom-0">Laporan</h1>
+        <h1 class="text-2xl bottom-0">LAPORAN</h1>
       </div>
       <div class="flex items-center right-0 gap-2"></div>
     </div>
