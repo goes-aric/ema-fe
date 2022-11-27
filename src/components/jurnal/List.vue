@@ -2,7 +2,7 @@
   <div>
     <div class="breadcrumb flex justify-between">
       <div class="w-full md:w-1/2 flex items-baseline gap-4">
-        <h1 class="text-2xl bottom-0">Jurnal Umum</h1>
+        <h1 class="text-2xl bottom-0">JURNAL UMUM</h1>
       </div>
       <div class="flex items-center right-0 gap-2">
         <button type="button" class="btn btn--success flex" @click="toggleNew()">
@@ -56,9 +56,12 @@
               <td class="text-left">{{ item.nama_user }}</td>
               <td class="text-center">
                 <div class="flex item-center justify-center">
+                  <button @click="toggleShow( item.id )" type="button" class="btn-show" alt="Detail" title="Detail">
+                    <IconShow />
+                  </button>                  
                   <button @click="toggleEdit( item.id )" type="button" class="btn-edit" alt="Edit" title="Edit" :disabled="item.sumber">
                     <IconEdit />
-                  </button>                  
+                  </button>
                   <button @click="confirmDialog( item.id )" type="button" class="btn-delete" alt="Hapus" title="Hapus" :disabled="item.sumber">
                     <IconTrash />
                   </button>
@@ -180,7 +183,7 @@
                 <div v-if="error.kredit" class="capitalize text-sm text-red-600"><span>{{ error.kredit[0] }}</span></div>                
               </div>
               <div class="w-1/5 md:w-1/12 mb-2">
-                <button type="button" class="btn btn--success mt-6 flex" @click="addDetail()">
+                <button v-if="!isShow" type="button" class="btn btn--success mt-6 flex" @click="addDetail()">
                   <IconPlus />
                 </button>
               </div>
@@ -192,7 +195,7 @@
                   <th scope="col" class="text-left">Nama Akun</th>
                   <th scope="col" class="text-center">Debet</th>
                   <th scope="col" class="text-center">Kredit</th>
-                  <th scope="col" class="px-3 text-center">Aksi</th>
+                  <th scope="col" class="px-3 text-center" v-if="!isShow">Aksi</th>
                 </tr>                                                         
               </thead>
               <tbody class="text-gray-600 font-light">
@@ -202,7 +205,7 @@
                   <td class="text-left">{{ item.nama_akun }}</td>
                   <td class="text-right">{{ formatNumber(toFixed(item.debet, 0)) }}</td>
                   <td class="text-right">{{ formatNumber(toFixed(item.kredit, 0)) }}</td>
-                  <td class="px-3 text-center">
+                  <td class="px-3 text-center" v-if="!isShow">
                     <div class="flex item-center justify-center">
                       <button @click="removeDetail( index )" type="button" class="btn-delete" alt="Hapus">
                         <IconTrash />
@@ -222,7 +225,7 @@
         </Form>     
       </template>
       <template v-slot:footer>
-        <button :disabled="isLoading" type="submit" form="modalForm" class="btn btn--success" alt="Simpan" title="Simpan">
+        <button v-if="!isShow" :disabled="isLoading" type="submit" form="modalForm" class="btn btn--success" alt="Simpan" title="Simpan">
           Simpan
         </button>
       </template> 
@@ -241,6 +244,7 @@ import jurnalServices from '@/services/jurnal/jurnalServices'
 import IconPlus from '../icons/IconPlus.vue'
 import IconTrash from '../icons/IconTrash.vue'
 import IconEdit from '../icons/IconEdit.vue'
+import IconShow from '../icons/IconShow.vue'
 import IconDateRange from '../icons/IconDateRange.vue'
 import Modal from '../widgets/Modal.vue'
 
@@ -253,6 +257,7 @@ export default {
     IconPlus,
     IconTrash,
     IconEdit,
+    IconShow,
     IconDateRange,
     Modal,
   },
@@ -326,6 +331,7 @@ export default {
       modalTitle: '',     
       showModal: false,      
       isEdit: false,
+      isShow: false,
       jurnalId: '',
       noJurnal: '',
       tanggal: '',
@@ -660,6 +666,7 @@ export default {
       return format.onlyNumber()
     },
     toggleNew() {
+      this.isShow = false
       this.isEdit = false
       this.error = []
       this.showModal = true
@@ -669,6 +676,7 @@ export default {
       this.$refs.akun.$el.focus()
     },
     toggleEdit(id) {
+      this.isShow = false
       this.isEdit = true
       this.error = []
       this.showModal = true
@@ -678,6 +686,17 @@ export default {
       this.jurnalId = id
       this.fetchDataById(id)
     },
+    toggleShow(id) {
+      this.isShow = true
+      this.isEdit = false
+      this.error = []
+      this.showModal = true
+      this.modalTitle = 'Detail Jurnal'
+      this.clearHeader()    
+      this.clearForm()
+      this.jurnalId = id
+      this.fetchDataById(id)
+    },    
     addDetail() {
       if (this.akun && this.debet && this.kredit) {
         const find = this.transaksiDetail.filter(data => data.kode_akun == this.akun.kode_akun)
