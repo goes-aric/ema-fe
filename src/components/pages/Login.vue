@@ -26,7 +26,13 @@
               <label for="password" class="label-control md:py-3">Password</label>
             </div>
             <div class="w-2/3">
-              <Field :type="inputType" id="password" name="password" v-model="password" rules="required" label="Password" placeholder="Masukan Password" class="form-control bg-gray-200 focus:bg-white focus:outline-none" />
+              <div class="relative flex justify-between items-center">
+                <Field :type="inputType" id="password" name="password" v-model="password" rules="required" label="Password" placeholder="Masukan Password" class="form-control bg-gray-200 focus:bg-white focus:outline-none" />
+                <span class="h-full absolute cursor-pointer right-0">
+                  <IconHide v-if="!visibility" @click="togglePassword()" class="m-3.5" />
+                  <IconView v-if="visibility" @click="togglePassword()" class="m-3.5" />
+                </span>                      
+              </div>
               <ErrorMessage name="password" class="capitalize text-sm text-red-600" />
               <div v-if="error.password" class="capitalize text-sm text-red-600"><span>{{ error.password[0] }}</span></div>          
             </div>
@@ -50,6 +56,8 @@ import { createToastInterface } from 'vue-toastification'
 import { Field, Form, ErrorMessage } from "vee-validate"
 import authServices from '@/services/user/authServices'
 import LoginBackground from '../icons/LoginBackground.vue'
+import IconView from '../icons/IconView.vue'
+import IconHide from '../icons/IconHide.vue'
 import Logo from '../../assets/images/logo.png'
 
 export default {
@@ -58,6 +66,8 @@ export default {
     Field,
     Form,
     ErrorMessage,
+    IconView,
+    IconHide,
     LoginBackground,
   },  
   setup () { 
@@ -183,6 +193,10 @@ export default {
       this.username = '',
       this.password = ''
     },
+    togglePassword(){
+      this.visibility = !this.visibility
+      this.inputType = this.visibility == false ? 'password' : 'text'
+    }    
   }
 }
 </script>

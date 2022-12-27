@@ -151,13 +151,25 @@
           <div class="flex w-full gap-4">
             <div class="w-1/2 mb-2">
               <label for="password" class="label-control">Password <span class="text-red-600">*</span></label>
-              <Field id="password" name="password" type="password" v-model="password" label="Password" maxlength="255" rules="" class="form-control" />
+              <div class="relative flex justify-between items-center">
+                <Field id="password" name="password" :type="inputType" v-model="password" label="Password" maxlength="255" rules="" class="form-control" />
+                <span class="h-full absolute cursor-pointer right-0">
+                  <IconHide v-if="!visibility" @click="togglePassword()" class="m-3.5" />
+                  <IconView v-if="visibility" @click="togglePassword()" class="m-3.5" />
+                </span>                      
+              </div>
               <ErrorMessage name="password" class="capitalize text-sm text-red-600" />
               <div v-if="error.password" class="capitalize text-sm text-red-600"><span>{{ error.password[0] }}</span></div>              
             </div>
             <div class="w-1/2 mb-2">
               <label for="password_confirmation" class="label-control">Konfirmasi Password <span class="text-red-600">*</span></label>
-              <Field id="password_confirmation" name="password_confirmation" type="password" v-model="passwordConfirmation" label="Konfirmasi password" rules="" class="form-control" />
+              <div class="relative flex justify-between items-center">
+                <Field id="password_confirmation" name="password_confirmation" :type="inputTypeConfirmation" v-model="passwordConfirmation" label="Konfirmasi password" rules="" class="form-control" />
+                <span class="h-full absolute cursor-pointer right-0">
+                  <IconHide v-if="!visibilityConfirmation" @click="togglePasswordConfirmation()" class="m-3.5" />
+                  <IconView v-if="visibilityConfirmation" @click="togglePasswordConfirmation()" class="m-3.5" />
+                </span>                      
+              </div>              
               <ErrorMessage name="password_confirmation" class="capitalize text-sm text-red-600" />
               <div v-if="error.password_confirmation" class="capitalize text-sm text-red-600"><span>{{ error.password_confirmation[0] }}</span></div>              
             </div>
@@ -180,6 +192,8 @@ import { createToastInterface } from 'vue-toastification'
 import IconPlus from '../icons/IconPlus.vue'
 import IconTrash from '../icons/IconTrash.vue'
 import IconEdit from '../icons/IconEdit.vue'
+import IconView from '../icons/IconView.vue'
+import IconHide from '../icons/IconHide.vue'
 import Modal from '../widgets/Modal.vue'
 
 export default {
@@ -191,6 +205,8 @@ export default {
     IconPlus,
     IconTrash,
     IconEdit,
+    IconView,
+    IconHide,    
     Modal,
   },
   setup () { 
@@ -275,6 +291,11 @@ export default {
       username: '',
       password: '',
       passwordConfirmation: '',
+      visibility: false,
+      visibilityConfirmation: false,
+      inputType: 'password',
+      inputTypeConfirmation: 'password',
+
       isLoading: false,
     }
   },
@@ -552,7 +573,15 @@ export default {
         }, 1500)
       }
       this.awaitingSearch = true
-    },        
+    },
+    togglePassword(){
+      this.visibility = !this.visibility
+      this.inputType = this.visibility == false ? 'password' : 'text'
+    },
+    togglePasswordConfirmation(){
+      this.visibilityConfirmation = !this.visibilityConfirmation
+      this.inputTypeConfirmation = this.visibilityConfirmation == false ? 'password' : 'text'
+    }          
   },
   created() {
     this.fetchData()
