@@ -7,6 +7,12 @@ import Dashboard from '../components/dashboard/Dashboard.vue'
 /* AKUN */
 import ListAkun from '../components/akun/List.vue'
 
+/* BARANG */
+import ListBarang from '../components/barang/List.vue'
+
+/* SUPPLIER */
+import ListSupplier from '../components/supplier/List.vue'
+
 /* USER */
 import ListUser from '../components/user/List.vue'
 import UpdatePassword from '../components/user/ChangePassword.vue'
@@ -45,6 +51,24 @@ let routes = [
       requiresAuth: true
     }    
   },
+  {
+    path: '/barang',
+    name: 'barang',
+    component: ListBarang,
+    meta: {
+      title: 'Barang',
+      requiresAuth: true
+    }    
+  },
+  {
+    path: '/supplier',
+    name: 'supplier',
+    component: ListSupplier,
+    meta: {
+      title: 'Supplier',
+      requiresAuth: true
+    }    
+  },    
   {
     path: '/users',
     name: 'user',

@@ -24,5 +24,8 @@ export default {
   },
   charts(){
     return axios.get(`/pembelian/charts`)
-  },  
+  },
+  fetchInvoiceNumber(){
+    return axios.get(`/pembelian/invoice`)
+  }
 }

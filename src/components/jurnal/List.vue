@@ -168,7 +168,7 @@
             <div class="flex gap-2" v-if="!isShow">
               <div class="w-full md:w-7/12 mb-2">
                 <label for="akun" class="label-control">Akun <span class="text-red-600">*</span></label>
-                <VueMultiselect id="akun" name="akun" ref="akun" v-model="akun" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="id" :custom-label="nameWithId" placeholder="Pilih Akun">
+                <VueMultiselect id="akun" name="akun" ref="akun" v-model="akun" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="id_akun" :custom-label="nameWithId" placeholder="Pilih Akun">
                   <template v-slot:caret>
                     <div>
                       <div class="multiselect__select">
@@ -186,13 +186,13 @@
               </div>
               <div class="w-2/5 md:w-2/12 mb-2">
                 <label for="debet" class="label-control">Debet<span class="text-red-600">*</span></label>
-                <Field id="debet" name="debet" v-model.lazy="debet" v-number="number" label="Debet" type="text" rules="" class="form-control" />
+                <Field id="debet" name="debet" v-model.lazy="debet" v-number="number" label="Debet" type="text" rules="" class="form-control text-right" />
                 <ErrorMessage name="debet" class="capitalize text-sm text-red-600" />
                 <div v-if="error.debet" class="capitalize text-sm text-red-600"><span>{{ error.debet[0] }}</span></div>
               </div>
               <div class="w-2/5 md:w-2/12 mb-2">
                 <label for="kredit" class="label-control">Kredit <span class="text-red-600">*</span></label>
-                <Field id="kredit" name="kredit" v-model.lazy="kredit" v-number="number" label="Kredit" type="text" rules="" class="form-control" />
+                <Field id="kredit" name="kredit" v-model.lazy="kredit" v-number="number" label="Kredit" type="text" rules="" class="form-control text-right" />
                 <ErrorMessage name="kredit" class="capitalize text-sm text-red-600" />
                 <div v-if="error.kredit" class="capitalize text-sm text-red-600"><span>{{ error.kredit[0] }}</span></div>                
               </div>
@@ -365,7 +365,7 @@ export default {
         separator: ',',
         prefix: '',
         precision: 2,
-      },       
+      },
     }
   },
   methods: {
@@ -377,6 +377,7 @@ export default {
           this.akunOptions = []
           records.forEach(element => {
             this.akunOptions.push({
+              'id_akun': element.id,
               'kode_akun': element.kode_akun,
               'nama_akun': element.nama_akun,
             })
@@ -386,6 +387,24 @@ export default {
           this.toast.error(response.data.message)          
         }
       } catch (error) {
+        console.log(error.message)
+      }
+    },
+    async fetchJournalNumber(){
+      try {
+        this.isLoading = true
+        const response = await jurnalServices.fetchJournalNumber()
+        if (response.data.status === 'success') {
+          this.isLoading = false
+          this.noJurnal = response.data.data
+        } else {
+          this.isLoading = false
+
+          /* THROW ERROR MESSAGES */
+          this.toast.error(response.data.message)            
+        }
+      } catch (error) {
+        this.isLoading = false
         console.log(error.message)
       }
     },    
@@ -514,6 +533,7 @@ export default {
           let kredit = 0
           this.record.details.forEach(element => {
             this.transaksiDetail.push({
+              id_akun: element.id_akun,
               kode_akun: element.kode_akun,
               nama_akun: element.nama_akun,
               debet: element.debet,
@@ -540,6 +560,7 @@ export default {
       try {
         this.isLoading = true
         let payload = new FormData()
+        payload.append('no_jurnal', this.noJurnal)
         payload.append('tanggal_transaksi', dayjs(this.tanggal).format('YYYY/MM/DD'))
         payload.append('deskripsi', this.deskripsi)
         payload.append('gambar', this.jurnalImage)
@@ -582,7 +603,7 @@ export default {
           let responseReturn = response.data.message
 
           /* IF RESPONSE HAS OBJECT, STORE RESPONSE TO ERRORS VARIABLE */
-          if (responseReturn.tanggal || responseReturn.metode_bayar || responseReturn.deskripsi || responseReturn.gambar) {
+          if (responseReturn.no_jurnal || responseReturn.tanggal_transaksi || responseReturn.metode_bayar || responseReturn.deskripsi || responseReturn.gambar) {
               this.error = response.data.message
 
           /* ELSE, THROW ERROR MESSAGES */
@@ -599,7 +620,7 @@ export default {
       }
     },
     clearHeader(){
-      this.noJurnal = !this.isEdit ? 'OTOMATIS' : ''
+      this.noJurnal = ''
       this.tanggal = new Date()
       this.deskripsi = ''
       this.transaksiDetail = []
@@ -687,6 +708,7 @@ export default {
       this.modalTitle = 'Tambah Jurnal'
       this.clearHeader()
       this.clearForm()
+      this.fetchJournalNumber()
       this.$refs.akun.$el.focus()
     },
     toggleEdit(id) {
@@ -716,6 +738,7 @@ export default {
         const find = this.transaksiDetail.filter(data => data.kode_akun == this.akun.kode_akun)
         if (find.length == 0) {
           this.transaksiDetail.push({
+            id_akun: this.akun.id_akun,
             kode_akun: this.akun.kode_akun,
             nama_akun: this.akun.nama_akun,
             debet: this.unformatNumber(this.debet),

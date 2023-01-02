@@ -2,10 +2,10 @@
   <div>
     <div class="breadcrumb flex justify-between">
       <div class="w-full md:w-1/2 flex items-baseline gap-4">
-        <h1 class="text-2xl bottom-0">DATA AKUN</h1>
+        <h1 class="text-2xl bottom-0">DATA SUPPLIER</h1>
       </div>
       <div class="flex items-center right-0 gap-2">
-        <button type="button" class="btn btn--success flex" id="addAkun" @click="toggleNew()">
+        <button type="button" class="btn btn--success flex" @click="toggleNew()">
           <IconPlus />
           <span class="ml-2 md:block hidden">Tambah</span>
         </button>
@@ -37,27 +37,25 @@
         <table>
           <thead>
             <tr>
-              <th scope="col" class="text-left">Kode Akun</th>
-              <th scope="col" class="text-left">Nama Akun</th>
-              <th scope="col" class="text-left">Akun Utama</th>
-              <th scope="col" class="text-left">Tipe</th>
+              <th scope="col" class="text-left">Nama Supplier</th>
+              <th scope="col" class="text-left">Alamat</th>
+              <th scope="col" class="text-left">No Telp</th>
               <th scope="col" class="text-center">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-if="akun.length == 0"><td class="text-center" colspan="5">Tidak ada data yang dapat ditampilkan</td></tr>
-            <tr v-else-if="totalFiltered == 0"><td class="text-center" colspan="5">Tidak ada catatan yang cocok ditemukan</td></tr>
-            <tr v-for="(akun, index) in akun" :key="akun.id">
-              <td class="text-left">{{ akun.kode_akun }}</td>
-              <td class="text-left">{{ akun.nama_akun }}</td>
-              <td class="text-left">{{ akun.induk ? akun.akun_utama : '' }} {{ akun.induk ? akun.induk.nama_akun : '' }}</td>
-              <td class="text-left">{{ akun.tipe_akun }}</td>
+            <tr v-if="supplier.length == 0"><td class="text-center" colspan="4">Tidak ada data yang dapat ditampilkan</td></tr>
+            <tr v-else-if="totalFiltered == 0"><td class="text-center" colspan="4">Tidak ada catatan yang cocok ditemukan</td></tr>
+            <tr v-for="(supplier, index) in supplier" :key="supplier.id">
+              <td class="text-left">{{ supplier.nama_supplier }}</td>
+              <td class="text-left">{{ supplier.alamat }}</td>
+              <td class="text-left">{{ supplier.no_telp }}</td>
               <td class="text-center">
                 <div class="flex item-center justify-center">
-                  <button @click="toggleEdit( akun.id )" type="button" class="btn-edit" alt="Edit" title="Edit">
+                  <button @click="toggleEdit( supplier.id )" type="button" class="btn-edit" alt="Edit" title="Edit">
                     <IconEdit />
                   </button>                  
-                  <button @click="confirmDialog( akun.id )" type="button" class="btn-delete" alt="Hapus" title="Hapus">
+                  <button @click="confirmDialog( supplier.id )" type="button" class="btn-delete" alt="Hapus" title="Hapus">
                     <IconTrash />
                   </button>
                 </div>
@@ -86,118 +84,26 @@
       <template v-slot:header><h3>{{ modalTitle }}</h3></template>
       <template v-slot:body>
         <Form id="modalForm" @submit="saveConfirmDialog()">
-          <div class="flex w-full gap-2">
-            <div class="w-2/6">
-              <label for="kode_akun" class="label-control">Kode Akun <span class="text-red-600">*</span></label>
-              <div class="flex w-full gap2">
-                <div class="w-1/5 mb-4">
-                  <Field id="tipe" name="tipe" type="text" v-model="tipe" label="Tipe" maxlength="255" class="mt-2.5" disabled />
-                </div>
-                <div class="w-4/5 mb-4">
-                  <Field id="kode_akun" name="kode_akun" type="text" ref="kodeAkun" v-model="kodeAkun" label="Kode Akun" rules="required" class="form-control" :readonly="isEdit" autocomplete="off" />
-                  <ErrorMessage name="kode_akun" class="capitalize text-sm text-red-600" />
-                  <div v-if="error.kode_akun" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun[0] }}</span></div>                
-                </div>
-              </div>
-            </div>
-            <div class="w-4/6 mb-4">
-              <label for="nama_akun" class="label-control">Nama Akun <span class="text-red-600">*</span></label>
-              <Field id="nama_akun" name="nama_akun" type="text" v-model="namaAkun" label="Nama Akun" maxlength="255" rules="required" class="form-control" />
-              <ErrorMessage name="nama_akun" class="capitalize text-sm text-red-600" />
-              <div v-if="error.nama_akun" class="capitalize text-sm text-red-600"><span>{{ error.nama_akun[0] }}</span></div>              
-            </div>
-          </div>          
           <div class="w-full mb-4">
-            <label for="akun_utama" class="label-control">Akun Utama <span class="text-red-600">*</span></label>
-            <VueMultiselect id="akun_utama" name="akun_utama" ref="akun_utama" v-model="akunUtama" :options="akunUtamaOptions" :showLabels="false" placeholder="Pilih Akun Utama" track-by="id" label="name" :custom-label="nameWithId">
-              <template v-slot:caret>
-                <div>
-                  <div class="multiselect__select">
-                    <span>
-                      <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                        <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </template>            
-            </VueMultiselect>
-            <ErrorMessage name="akun_utama" class="capitalize text-sm text-red-600" />
-            <div v-if="error.akun_utama" class="capitalize text-sm text-red-600"><span>{{ error.akun_utama[0] }}</span></div>
+            <label for="nama_supplier" class="label-control">Nama Supplier <span class="text-red-600">*</span></label>
+            <Field id="nama_supplier" name="nama_supplier" type="text" v-model="namaSupplier" label="Nama Supplier" maxlength="255" rules="required" class="form-control" />
+            <ErrorMessage name="nama_supplier" class="capitalize text-sm text-red-600" />
+            <div v-if="error.nama_supplier" class="capitalize text-sm text-red-600"><span>{{ error.nama_supplier[0] }}</span></div>
           </div>
           <div class="w-full mb-4">
-            <label for="tipe_akun" class="label-control">Tipe Akun <span class="text-red-600">*</span></label>
-            <VueMultiselect id="tipe_akun" name="tipe_akun" ref="tipeAkun" v-model="tipeAkun" track-by="name" label="name" :options="tipeAkunOptions" :showLabels="false" placeholder="Pilih Tipe Akun">
-              <template v-slot:caret>
-                <div>
-                  <div class="multiselect__select">
-                    <span>
-                      <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                        <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </template>            
-            </VueMultiselect>
-            <ErrorMessage name="tipe_akun" class="capitalize text-sm text-red-600" />
-            <div v-if="error.tipe_akun" class="capitalize text-sm text-red-600"><span>{{ error.tipe_akun[0] }}</span></div>
+            <label for="alamat" class="label-control">Alamat <span class="text-red-600">*</span></label>
+            <Field id="alamat" name="alamat" as="textarea" v-model="alamat" label="Alamat" maxlength="255" rules="required" class="form-control" />
+            <ErrorMessage name="alamat" class="capitalize text-sm text-red-600" />
+            <div v-if="error.alamat" class="capitalize text-sm text-red-600"><span>{{ error.alamat[0] }}</span></div>
           </div>
           <div class="flex gap-4">
-            <div class="w-full mb-4">
-              <label for="setara_kas" class="label-control">Setara Kas ? <span class="text-red-600">*</span></label>
-              <VueMultiselect id="setara_kas" name="setara_kas" ref="setaraKas" v-model="setaraKas" track-by="id" label="name" :options="setaraKasOptions" :showLabels="false" placeholder="Pilih Setara Kas">
-                <template v-slot:caret>
-                  <div>
-                    <div class="multiselect__select">
-                      <span>
-                        <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                          <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </template>            
-              </VueMultiselect>
-              <ErrorMessage name="setara_kas" class="capitalize text-sm text-red-600" />
-              <div v-if="error.setara_kas" class="capitalize text-sm text-red-600"><span>{{ error.setara_kas[0] }}</span></div>
+            <div class="w-1/2 mb-4">
+              <label for="no_telp" class="label-control">No Telp <span class="text-red-600">*</span></label>
+              <Field id="no_telp" name="no_telp" type="text" v-model="noTelp" label="No Telp" maxlength="255" rules="" class="form-control" />
+              <ErrorMessage name="no_telp" class="capitalize text-sm text-red-600" />
+              <div v-if="error.no_telp" class="capitalize text-sm text-red-600"><span>{{ error.no_telp[0] }}</span></div>
             </div>
-            <div class="w-full mb-4">
-              <label for="arus_kas_tipe" class="label-control">Arus Kas Tipe <span class="text-red-600">*</span></label>
-              <VueMultiselect id="arus_kas_tipe" name="arus_kas_tipe" ref="arusKasTipe" v-model="arusKasTipe" track-by="id" label="name" :options="arusKasTipeOptions" :showLabels="false" placeholder="Pilih Arus Kas Tipe">
-                <template v-slot:caret>
-                  <div>
-                    <div class="multiselect__select">
-                      <span>
-                        <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                          <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </template>            
-              </VueMultiselect>
-              <ErrorMessage name="arus_kas_tipe" class="capitalize text-sm text-red-600" />
-              <div v-if="error.arus_kas_tipe" class="capitalize text-sm text-red-600"><span>{{ error.arus_kas_tipe[0] }}</span></div>
-            </div>            
-          </div>
-          <div class="w-full mb-4">
-            <label for="default" class="label-control">Transaksi Bawaan <span class="text-red-600">*</span></label>
-            <VueMultiselect id="default" name="default" ref="default" v-model="default" track-by="name" label="name" :options="defaultOptions" :showLabels="false" placeholder="Pilih Tipe Akun">
-              <template v-slot:caret>
-                <div>
-                  <div class="multiselect__select">
-                    <span>
-                      <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                        <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </template>            
-            </VueMultiselect>
-            <ErrorMessage name="default" class="capitalize text-sm text-red-600" />
-            <div v-if="error.default" class="capitalize text-sm text-red-600"><span>{{ error.default[0] }}</span></div>
+            <div class="w-1/2 mb-4"></div>            
           </div>          
         </Form>     
       </template>
@@ -215,14 +121,14 @@ import format from '@/helpers/formatNumber'
 import { Field, Form, ErrorMessage } from "vee-validate"
 import { createToastInterface } from 'vue-toastification'
 import _ from 'lodash'
-import akunServices from '@/services/akun/akunServices'
+import supplierServices from '@/services/supplier/supplierServices'
 import IconPlus from '../icons/IconPlus.vue'
 import IconTrash from '../icons/IconTrash.vue'
 import IconEdit from '../icons/IconEdit.vue'
 import Modal from '../widgets/Modal.vue'
 
 export default {
-  name: 'HalamanAkun',
+  name: 'HalamanSupplier',
   components: {
     Field,
     Form,
@@ -279,8 +185,8 @@ export default {
       ],
       sortField: { field: 'id', name: 'ID (Bawaan)' },
       sortFields: [
-        { field: 'kode_akun', name: 'Kode Akun' },
-        { field: 'nama_akun', name: 'Nama Akun' },
+        { field: 'nama_supplier', name: 'Nama Supplier' },
+        { field: 'alamat', name: 'Alamat' },
         { field: 'updated_at', name: 'Diedit' },
         { field: 'id', name: 'ID (Bawaan)' }
       ],        
@@ -297,68 +203,19 @@ export default {
       currentPage: null,
       lastPage: null,
       shows: ['25', '50', '100'],
-      akun: [],
+      supplier: [],
       error: [],
       modalTitle: '',     
       showModal: false,      
       isEdit: false,
-      akunId: '',
-      tipe: '',
-      kodeAkun: '',
-      namaAkun: '',
-      akunUtama: '',
-      akunUtamaOptions: [],
-      tipeAkun: '',
-      tipeAkunOptions: [
-        { id: '1-', name: 'AKTIVA' }, { id: '2-', name: 'KEWAJIBAN' }, { id: '3-', name: 'EKUITAS' }, { id: '4-', name: 'PENDAPATAN' }, { id: '5-', name: 'BEBAN' }
-      ],
-      setaraKas: '',
-      setaraKasOptions: [
-        { id: 1, name: 'YA' },
-        { id: null, name: 'TIDAK' }
-      ],
-      arusKasTipe: '',
-      arusKasTipeOptions: [
-        { id: "operasional", name: "Operasional" }, 
-        { id: "investasi", name: "Investasi" },
-        { id: "pendanaan", name: "Pendanaan" }
-      ],
-      default: '',
-      defaultOptions: [
-        { id: "hpp", name: "HPP" },
-        { id: "persediaan", name: "Persediaan" },
-        { id: "tunai", name: "Transaksi Tunai" }, 
-        { id: "pembelian", name: "Pembelian" },
-        { id: "penjualan", name: "Penjualan" },
-        { id: "pembelian kredit", name: "Pembelian Kredit" },
-        { id: "penjualan kredit", name: "Penjualan Kredit" },
-        { id: "diskon pembelian", name: "Diskon Pembelian" },
-        { id: "diskon penjualan", name: "Diskon Penjualan" }
-      ],      
+      supplierId: '',
+      namaSupplier: '',
+      alamat: '',
+      noTelp: '',
       isLoading: false,
     }
   },
   methods: {
-    async fetchAkunUtama() {
-      try {
-        const response = await akunServices.fetchDataOptions()
-        if (response.data.status === 'success') {
-          const records = response.data.data
-          this.akunUtamaOptions = []
-          records.forEach(element => {
-            this.akunUtamaOptions.push({
-              'id': element.kode_akun,
-              'name': element.nama_akun
-            })
-          })
-        } else {
-          /* THROW ERROR MESSAGES */
-          this.toast.error(response.data.message)          
-        }
-      } catch (error) {
-        console.log(error.message)
-      }      
-    },    
     async fetchData() {
       try {
         this.isLoading = true
@@ -373,7 +230,7 @@ export default {
           sort_field: this.sortField.field,
           sort_option: this.sortOption.field
         }
-        const response = await akunServices.fetchLimit(params)
+        const response = await supplierServices.fetchLimit(params)
         if (response.data.status === 'success') {
           this.isLoading =false
 
@@ -384,7 +241,7 @@ export default {
           this.toRecord = records.to
           this.currentPage = records.current_page
           this.lastPage = records.last_page
-          this.akun = records.data
+          this.supplier = records.data
         } else {
           this.isLoading =false
 
@@ -398,7 +255,7 @@ export default {
     },
     async delete(id) {
       try {
-        const response = await akunServices.delete(id)
+        const response = await supplierServices.delete(id)
         return response.data
       } catch (error) {     
         return error
@@ -465,20 +322,14 @@ export default {
     async fetchDataById(id){
       try {
         this.isLoading = true
-        const response = await akunServices.fetchById(id)
+        const response = await supplierServices.fetchById(id)
         if (response.data.status === 'success') {
           this.isLoading = false
           this.record = response.data.data
-          const kodeAkun = this.record.kode_akun.split("-")
 
-          this.tipe = kodeAkun[0] + '-'
-          this.kodeAkun = kodeAkun[1]
-          this.namaAkun = this.record.nama_akun
-          this.akunUtama = this.record.induk ? { id: this.record.akun_utama, name: this.record.induk.nama_akun } : ''
-          this.tipeAkun = { id: this.record.tipe_akun_id, name: this.record.tipe_akun }
-          this.setaraKas = this.record.arus_kas ? { id: this.record.arus_kas, name: 'YA' } : { id: null, name: 'TIDAK' }
-          this.arusKasTipe = this.record.arus_kas_tipe ? { id: this.record.arus_kas_tipe, name: this.record.arus_kas_tipe_text } : ''
-          this.default = this.record.default ? { id: this.record.default, name: this.record.default_text } : ''
+          this.namaSupplier = this.record.nama_supplier
+          this.alamat = this.record.alamat
+          this.noTelp = this.record.no_telp
         } else {
           this.isLoading = false
 
@@ -494,19 +345,15 @@ export default {
       try {
         this.isLoading = true       
         const payload = {
-          kode_akun: this.tipe + '' + this.kodeAkun,
-          nama_akun: this.namaAkun,
-          akun_utama: this.akunUtama ? this.akunUtama.id : null,
-          tipe_akun: this.tipeAkun ? this.tipeAkun.name : null,
-          setara_kas: this.setaraKas ? this.setaraKas.id : null,
-          arus_kas_tipe: this.arusKasTipe ? this.arusKasTipe.id : null,
-          default: this.default ? this.default.id : null
+          nama_supplier: this.namaSupplier,
+          alamat: this.alamat,
+          no_telp: this.noTelp
         }
         let response = ''
         if (this.isEdit) {
-          response = await akunServices.update(this.akunId, payload)
+          response = await supplierServices.update(this.supplierId, payload)
         } else {
-          response = await akunServices.create(payload)
+          response = await supplierServices.create(payload)
         }
         
         if (response.data.status === 'success') {
@@ -516,7 +363,7 @@ export default {
           /* SET LOADING STATE IS FALSE */
           this.isLoading = false
 
-          if (this.akunId) {
+          if (this.supplierId) {
             this.showModal = false
           }
 
@@ -530,7 +377,6 @@ export default {
           this.toast.success(response.data.message)
 
           /* RELOAD DATA */
-          this.fetchAkunUtama()
           this.fetchData()
         } else {
           /* SET LOADING STATE IS FALSE */
@@ -543,7 +389,7 @@ export default {
           let responseReturn = response.data.message
 
           /* IF RESPONSE HAS OBJECT, STORE RESPONSE TO ERRORS VARIABLE */
-          if (responseReturn.kode_akun || responseReturn.nama_akun || responseReturn.akun_utama || responseReturn.tipe_akun || responseReturn.default) {
+          if (responseReturn.nama_supplier || responseReturn.alamat || responseReturn.no_telp) {
               this.error = response.data.message
 
           /* ELSE, THROW ERROR MESSAGES */
@@ -560,14 +406,10 @@ export default {
       }
     },
     clearForm(){
-      this.akunId = ''
-      this.kodeAkun = ''
-      this.namaAkun = ''
-      this.akunUtama = ''
-      this.tipeAkun = '' 
-      this.setaraKas = { id: null, name: 'TIDAK' }
-      this.arusKasTipe = ''
-      this.default = ''
+      this.supplierId = ''
+      this.namaSupplier = ''
+      this.alamat = ''
+      this.noTelp = ''  
     },
     updateQueryString() {
       const search = this.search ? this.search.toLowerCase() : ''
@@ -637,19 +479,17 @@ export default {
       this.isEdit = false
       this.error = []
       this.showModal = true
-      this.modalTitle = 'Tambah Akun'
+      this.modalTitle = 'Tambah Supplier'
       this.clearForm()
-      this.fetchAkunUtama()
-      this.$refs.kodeAkun.$el.focus()
+      this.$refs.namaSupplier.$el.focus()
     },
     toggleEdit(id) {
       this.isEdit = true
       this.error = []
       this.showModal = true
-      this.modalTitle = 'Edit Akun'
+      this.modalTitle = 'Edit Supplier'
       this.clearForm()
-      this.fetchAkunUtama()
-      this.akunId = id
+      this.supplierId = id
       this.fetchDataById(id)
     },
     nameWithId ({ name, id }) {
@@ -664,13 +504,6 @@ export default {
     document.removeEventListener("keydown", this.searchFocus);
   },
   watch: {
-    tipeAkun: function() {
-      if (this.tipeAkun) {
-        this.tipe = this.tipeAkun.id
-      } else {
-        this.tipe = null
-      }
-    },
     '$route.query.take': {
       handler: function(take) {
         if (take) {

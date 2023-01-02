@@ -2,10 +2,10 @@
   <div>
     <div class="breadcrumb flex justify-between">
       <div class="w-full md:w-1/2 flex items-baseline gap-4">
-        <h1 class="text-2xl bottom-0">DATA AKUN</h1>
+        <h1 class="text-2xl bottom-0">DATA PENJUALAN</h1>
       </div>
       <div class="flex items-center right-0 gap-2">
-        <button type="button" class="btn btn--success flex" id="addAkun" @click="toggleNew()">
+        <button type="button" class="btn btn--success flex" @click="toggleNew()">
           <IconPlus />
           <span class="ml-2 md:block hidden">Tambah</span>
         </button>
@@ -37,27 +37,27 @@
         <table>
           <thead>
             <tr>
-              <th scope="col" class="text-left">Kode Akun</th>
-              <th scope="col" class="text-left">Nama Akun</th>
-              <th scope="col" class="text-left">Akun Utama</th>
-              <th scope="col" class="text-left">Tipe</th>
+              <th scope="col" class="text-left">Kode Jual</th>
+              <th scope="col" class="text-left">Tanggal</th>
+              <th scope="col" class="text-left">Uraian</th>
+              <th scope="col" class="text-left">Nominal</th>
               <th scope="col" class="text-center">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-if="akun.length == 0"><td class="text-center" colspan="5">Tidak ada data yang dapat ditampilkan</td></tr>
-            <tr v-else-if="totalFiltered == 0"><td class="text-center" colspan="5">Tidak ada catatan yang cocok ditemukan</td></tr>
-            <tr v-for="(akun, index) in akun" :key="akun.id">
-              <td class="text-left">{{ akun.kode_akun }}</td>
-              <td class="text-left">{{ akun.nama_akun }}</td>
-              <td class="text-left">{{ akun.induk ? akun.akun_utama : '' }} {{ akun.induk ? akun.induk.nama_akun : '' }}</td>
-              <td class="text-left">{{ akun.tipe_akun }}</td>
+            <tr v-if="penjualan.length == 0"><td class="text-center" colspan="6">Tidak ada data yang dapat ditampilkan</td></tr>
+            <tr v-else-if="totalFiltered == 0"><td class="text-center" colspan="6">Tidak ada catatan yang cocok ditemukan</td></tr>
+            <tr v-for="(item, index) in penjualan" :key="item.id">
+              <td class="text-left">{{ item.kode_jual }}</td>
+              <td class="text-left">{{ item.tanggal }}</td>
+              <td class="text-left">{{ item.uraian }}</td>
+              <td class="text-right">{{ formatNumber(toFixed(item.nominal, 0)) }}</td>
               <td class="text-center">
                 <div class="flex item-center justify-center">
-                  <button @click="toggleEdit( akun.id )" type="button" class="btn-edit" alt="Edit" title="Edit">
+                  <button @click="toggleEdit( item.id )" type="button" class="btn-edit" alt="Edit" title="Edit">
                     <IconEdit />
                   </button>                  
-                  <button @click="confirmDialog( akun.id )" type="button" class="btn-delete" alt="Hapus" title="Hapus">
+                  <button @click="confirmDialog( item.id )" type="button" class="btn-delete" alt="Hapus" title="Hapus">
                     <IconTrash />
                   </button>
                 </div>
@@ -82,71 +82,77 @@
     </div>
 
     <!-- Modal Dialog -->
-    <modal :show="showModal" @close="showModal = false" addClass="modal-sm" modalOrientation="pt-20 md:pt-6">
+    <modal :show="showModal" @close="showModal = false" addClass="modal-md" modalOrientation="pt-20 lg:pt-6">
       <template v-slot:header><h3>{{ modalTitle }}</h3></template>
       <template v-slot:body>
         <Form id="modalForm" @submit="saveConfirmDialog()">
-          <div class="flex w-full gap-2">
-            <div class="w-2/6">
-              <label for="kode_akun" class="label-control">Kode Akun <span class="text-red-600">*</span></label>
-              <div class="flex w-full gap2">
-                <div class="w-1/5 mb-4">
-                  <Field id="tipe" name="tipe" type="text" v-model="tipe" label="Tipe" maxlength="255" class="mt-2.5" disabled />
-                </div>
-                <div class="w-4/5 mb-4">
-                  <Field id="kode_akun" name="kode_akun" type="text" ref="kodeAkun" v-model="kodeAkun" label="Kode Akun" rules="required" class="form-control" :readonly="isEdit" autocomplete="off" />
-                  <ErrorMessage name="kode_akun" class="capitalize text-sm text-red-600" />
-                  <div v-if="error.kode_akun" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun[0] }}</span></div>                
-                </div>
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="kode_jual" class="label-control md:py-3">Kode Beli <span class="text-red-600">*</span></label>
+            </div>
+            <div class="flex md:w-3/5">
+              <div class="w-1/2">
+                <Field id="kode_jual" name="kode_jual" v-model="kodeJual" label="Kode Beli" type="text" rules="" class="form-control" disabled />
+                <ErrorMessage name="kode_jual" class="capitalize text-sm text-red-600" />
+                <div v-if="error.kode_jual" class="capitalize text-sm text-red-600"><span>{{ error.kode_jual[0] }}</span></div>                  
               </div>
+              <div class="w-1/2"></div>
             </div>
-            <div class="w-4/6 mb-4">
-              <label for="nama_akun" class="label-control">Nama Akun <span class="text-red-600">*</span></label>
-              <Field id="nama_akun" name="nama_akun" type="text" v-model="namaAkun" label="Nama Akun" maxlength="255" rules="required" class="form-control" />
-              <ErrorMessage name="nama_akun" class="capitalize text-sm text-red-600" />
-              <div v-if="error.nama_akun" class="capitalize text-sm text-red-600"><span>{{ error.nama_akun[0] }}</span></div>              
+          </div>
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="tanggal" class="label-control md:py-3">Tanggal <span class="text-red-600">*</span></label>
             </div>
-          </div>          
-          <div class="w-full mb-4">
-            <label for="akun_utama" class="label-control">Akun Utama <span class="text-red-600">*</span></label>
-            <VueMultiselect id="akun_utama" name="akun_utama" ref="akun_utama" v-model="akunUtama" :options="akunUtamaOptions" :showLabels="false" placeholder="Pilih Akun Utama" track-by="id" label="name" :custom-label="nameWithId">
-              <template v-slot:caret>
-                <div>
-                  <div class="multiselect__select">
-                    <span>
-                      <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                        <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </template>            
-            </VueMultiselect>
-            <ErrorMessage name="akun_utama" class="capitalize text-sm text-red-600" />
-            <div v-if="error.akun_utama" class="capitalize text-sm text-red-600"><span>{{ error.akun_utama[0] }}</span></div>
+            <div class="flex md:w-3/5">
+              <div class="w-1/2">
+                <v-date-picker v-model="tanggal" mode="date" :masks="masks" color="purple" title-position="left" :attributes="attrs">
+                  <template v-slot="{ inputValue, inputEvents }">
+                    <div class="md:flex gap-6">
+                      <div class="w-full">
+                        <div class="relative flex justify-between items-center">
+                          <input id="tanggal" type="text" class="form-control" :value="inputValue" v-on="inputEvents">
+                          <span class="h-full absolute pointer-events-none right-0">
+                            <IconDateRange class="m-3" />
+                          </span>                      
+                        </div>
+                        <div v-if="error.tanggal" class="capitalize text-sm text-red-600"><span>{{ error.tanggal[0] }}</span></div>
+                      </div>
+                    </div>
+                  </template>
+                </v-date-picker>                  
+              </div>
+              <div class="w-1/2"></div>
+            </div>
           </div>
-          <div class="w-full mb-4">
-            <label for="tipe_akun" class="label-control">Tipe Akun <span class="text-red-600">*</span></label>
-            <VueMultiselect id="tipe_akun" name="tipe_akun" ref="tipeAkun" v-model="tipeAkun" track-by="name" label="name" :options="tipeAkunOptions" :showLabels="false" placeholder="Pilih Tipe Akun">
-              <template v-slot:caret>
-                <div>
-                  <div class="multiselect__select">
-                    <span>
-                      <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                        <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </template>            
-            </VueMultiselect>
-            <ErrorMessage name="tipe_akun" class="capitalize text-sm text-red-600" />
-            <div v-if="error.tipe_akun" class="capitalize text-sm text-red-600"><span>{{ error.tipe_akun[0] }}</span></div>
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="nominal" class="label-control md:py-3">Nominal <span class="text-red-600">*</span></label>
+            </div>
+            <div class="flex md:w-3/5">
+              <div class="w-1/2">
+                <Field id="nominal" name="nominal" v-model.lazy="nominal" v-number="number" label="Nominal" type="text" rules="" class="form-control" />
+                <ErrorMessage name="nominal" class="capitalize text-sm text-red-600" />
+                <div v-if="error.nominal" class="capitalize text-sm text-red-600"><span>{{ error.nominal[0] }}</span></div>                  
+              </div>
+              <div class="w-1/2"></div>
+            </div>
+          </div>            
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="uraian" class="label-control md:py-3">Uraian <span class="text-red-600">*</span></label>
+            </div>
+            <div class="md:w-3/5">
+              <Field id="uraian" name="uraian" v-model="uraian" label="Uraian" as="textarea" rules="required" rows="5" class="form-control" />
+              <ErrorMessage name="uraian" class="capitalize text-sm text-red-600" />
+              <div v-if="error.uraian" class="capitalize text-sm text-red-600"><span>{{ error.uraian[0] }}</span></div>
+            </div>
           </div>
-          <div class="flex gap-4">
-            <div class="w-full mb-4">
-              <label for="setara_kas" class="label-control">Setara Kas ? <span class="text-red-600">*</span></label>
-              <VueMultiselect id="setara_kas" name="setara_kas" ref="setaraKas" v-model="setaraKas" track-by="id" label="name" :options="setaraKasOptions" :showLabels="false" placeholder="Pilih Setara Kas">
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="kode_akun_penerimaan" class="label-control md:py-3">Akun Debet <span class="text-red-600">*</span></label>
+            </div>
+            <div class="md:w-3/5">
+              <VueMultiselect id="kode_akun_penerimaan" name="kode_akun_penerimaan" ref="akunPenerimaan" v-model="akunPenerimaan" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun">
                 <template v-slot:caret>
                   <div>
                     <div class="multiselect__select">
@@ -157,14 +163,18 @@
                       </span>
                     </div>
                   </div>
-                </template>            
+                </template>
               </VueMultiselect>
-              <ErrorMessage name="setara_kas" class="capitalize text-sm text-red-600" />
-              <div v-if="error.setara_kas" class="capitalize text-sm text-red-600"><span>{{ error.setara_kas[0] }}</span></div>
+              <ErrorMessage name="kode_akun_penerimaan" class="capitalize text-sm text-red-600" />
+              <div v-if="error.kode_akun_penerimaan" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun_penerimaan[0] }}</span></div> 
             </div>
-            <div class="w-full mb-4">
-              <label for="arus_kas_tipe" class="label-control">Arus Kas Tipe <span class="text-red-600">*</span></label>
-              <VueMultiselect id="arus_kas_tipe" name="arus_kas_tipe" ref="arusKasTipe" v-model="arusKasTipe" track-by="id" label="name" :options="arusKasTipeOptions" :showLabels="false" placeholder="Pilih Arus Kas Tipe">
+          </div>
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="kode_akun_persediaan" class="label-control md:py-3">Akun Kredit <span class="text-red-600">*</span></label>
+            </div>
+            <div class="md:w-3/5">
+              <VueMultiselect id="kode_akun_persediaan" name="kode_akun_persediaan" ref="akunPersediaan" v-model="akunPersediaan" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun">
                 <template v-slot:caret>
                   <div>
                     <div class="multiselect__select">
@@ -175,30 +185,25 @@
                       </span>
                     </div>
                   </div>
-                </template>            
+                </template>
               </VueMultiselect>
-              <ErrorMessage name="arus_kas_tipe" class="capitalize text-sm text-red-600" />
-              <div v-if="error.arus_kas_tipe" class="capitalize text-sm text-red-600"><span>{{ error.arus_kas_tipe[0] }}</span></div>
-            </div>            
-          </div>
-          <div class="w-full mb-4">
-            <label for="default" class="label-control">Transaksi Bawaan <span class="text-red-600">*</span></label>
-            <VueMultiselect id="default" name="default" ref="default" v-model="default" track-by="name" label="name" :options="defaultOptions" :showLabels="false" placeholder="Pilih Tipe Akun">
-              <template v-slot:caret>
-                <div>
-                  <div class="multiselect__select">
-                    <span>
-                      <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                        <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                      </svg>
-                    </span>
-                  </div>
-                </div>
-              </template>            
-            </VueMultiselect>
-            <ErrorMessage name="default" class="capitalize text-sm text-red-600" />
-            <div v-if="error.default" class="capitalize text-sm text-red-600"><span>{{ error.default[0] }}</span></div>
+              <ErrorMessage name="kode_akun_persediaan" class="capitalize text-sm text-red-600" />
+              <div v-if="error.kode_akun_persediaan" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun_persediaan[0] }}</span></div> 
+            </div>
           </div>          
+          <div class="flex w-full mb-2 gap-2">
+            <div class="md:w-2/5">
+              <label for="gambar" class="label-control md:py-3">Bukti Transaksi <span class="text-red-600">*</span></label>
+            </div>
+            <div class="md:w-3/5">
+              <div class="md:h-32 border border-dashed border-gray-400 flex items-center justify-center p-1 rounded-sm mb-2">
+                <img class="h-full" :src="image" />
+              </div>
+              <input id="gambar" name="gambar" type="file" ref="gambar" @change="onFileChange" rules="image|ext:jpg,png" label="Gambar" />
+              <ErrorMessage name="gambar" class="capitalize text-sm text-red-600" />
+              <div v-if="error.gambar" class="capitalize text-sm text-red-600"><span>{{ error.gambar[0] }}</span></div>              
+            </div>
+          </div>
         </Form>     
       </template>
       <template v-slot:footer>
@@ -215,14 +220,17 @@ import format from '@/helpers/formatNumber'
 import { Field, Form, ErrorMessage } from "vee-validate"
 import { createToastInterface } from 'vue-toastification'
 import _ from 'lodash'
+import dayjs from 'dayjs'
 import akunServices from '@/services/akun/akunServices'
+import penjualanServices from '@/services/penjualan/penjualanServices'
 import IconPlus from '../icons/IconPlus.vue'
 import IconTrash from '../icons/IconTrash.vue'
 import IconEdit from '../icons/IconEdit.vue'
+import IconDateRange from '../icons/IconDateRange.vue'
 import Modal from '../widgets/Modal.vue'
 
 export default {
-  name: 'HalamanAkun',
+  name: 'HalamanPenjualan',
   components: {
     Field,
     Form,
@@ -230,6 +238,7 @@ export default {
     IconPlus,
     IconTrash,
     IconEdit,
+    IconDateRange,
     Modal,
   },
   setup () { 
@@ -279,8 +288,8 @@ export default {
       ],
       sortField: { field: 'id', name: 'ID (Bawaan)' },
       sortFields: [
-        { field: 'kode_akun', name: 'Kode Akun' },
-        { field: 'nama_akun', name: 'Nama Akun' },
+        { field: 'tanggal', name: 'Tanggal' },
+        { field: 'grand_total', name: 'Grand Total' },
         { field: 'updated_at', name: 'Diedit' },
         { field: 'id', name: 'ID (Bawaan)' }
       ],        
@@ -297,67 +306,50 @@ export default {
       currentPage: null,
       lastPage: null,
       shows: ['25', '50', '100'],
-      akun: [],
+      penjualan: [],
       error: [],
       modalTitle: '',     
       showModal: false,      
       isEdit: false,
-      akunId: '',
-      tipe: '',
-      kodeAkun: '',
-      namaAkun: '',
-      akunUtama: '',
-      akunUtamaOptions: [],
-      tipeAkun: '',
-      tipeAkunOptions: [
-        { id: '1-', name: 'AKTIVA' }, { id: '2-', name: 'KEWAJIBAN' }, { id: '3-', name: 'EKUITAS' }, { id: '4-', name: 'PENDAPATAN' }, { id: '5-', name: 'BEBAN' }
-      ],
-      setaraKas: '',
-      setaraKasOptions: [
-        { id: 1, name: 'YA' },
-        { id: null, name: 'TIDAK' }
-      ],
-      arusKasTipe: '',
-      arusKasTipeOptions: [
-        { id: "operasional", name: "Operasional" }, 
-        { id: "investasi", name: "Investasi" },
-        { id: "pendanaan", name: "Pendanaan" }
-      ],
-      default: '',
-      defaultOptions: [
-        { id: "hpp", name: "HPP" },
-        { id: "persediaan", name: "Persediaan" },
-        { id: "tunai", name: "Transaksi Tunai" }, 
-        { id: "pembelian", name: "Pembelian" },
-        { id: "penjualan", name: "Penjualan" },
-        { id: "pembelian kredit", name: "Pembelian Kredit" },
-        { id: "penjualan kredit", name: "Penjualan Kredit" },
-        { id: "diskon pembelian", name: "Diskon Pembelian" },
-        { id: "diskon penjualan", name: "Diskon Penjualan" }
-      ],      
+      penjualanId: '',
+      kodeJual: '',
+      tanggal: '',
+      nominal: '',
+      uraian: '',    
+      akunPersediaan: '',
+      akunPenerimaan: '',
+      akunOptions: [],
+      image: '',
+      penjualanImage: '',
       isLoading: false,
+      number: {
+        decimal: '.',
+        separator: ',',
+        prefix: '',
+        precision: 2,
+      },       
     }
   },
   methods: {
-    async fetchAkunUtama() {
+    async fetchAkunOptions() {
       try {
-        const response = await akunServices.fetchDataOptions()
+        const response = await akunServices.fetchDataOptions(null)
         if (response.data.status === 'success') {
           const records = response.data.data
-          this.akunUtamaOptions = []
+          this.akunOptions = []
           records.forEach(element => {
-            this.akunUtamaOptions.push({
-              'id': element.kode_akun,
-              'name': element.nama_akun
+            this.akunOptions.push({
+              'kode_akun': element.kode_akun,
+              'nama_akun': element.nama_akun,
             })
-          })
+          })          
         } else {
           /* THROW ERROR MESSAGES */
           this.toast.error(response.data.message)          
         }
       } catch (error) {
         console.log(error.message)
-      }      
+      }
     },    
     async fetchData() {
       try {
@@ -373,7 +365,7 @@ export default {
           sort_field: this.sortField.field,
           sort_option: this.sortOption.field
         }
-        const response = await akunServices.fetchLimit(params)
+        const response = await penjualanServices.fetchLimit(params)
         if (response.data.status === 'success') {
           this.isLoading =false
 
@@ -384,7 +376,7 @@ export default {
           this.toRecord = records.to
           this.currentPage = records.current_page
           this.lastPage = records.last_page
-          this.akun = records.data
+          this.penjualan = records.data
         } else {
           this.isLoading =false
 
@@ -398,7 +390,7 @@ export default {
     },
     async delete(id) {
       try {
-        const response = await akunServices.delete(id)
+        const response = await penjualanServices.delete(id)
         return response.data
       } catch (error) {     
         return error
@@ -457,28 +449,31 @@ export default {
         cancelButtonText: 'Batal'
       }).then(async (result) => {
         if (result.isConfirmed) {
-          /* CALL CREATE FUNCTION */
-          this.save()
+          if (this.unformatNumber(this.totalDebet) != this.unformatNumber(this.totalKredit)) {
+            /* THROW ERROR MESSAGES */
+            this.toast.error('Jumlah total Debet dan Kredit tidak sama, proses tidak dapat dilanjutkan!')
+          } else {
+            /* CALL CREATE FUNCTION */
+            this.save()            
+          }
         }
       })
     },
     async fetchDataById(id){
       try {
         this.isLoading = true
-        const response = await akunServices.fetchById(id)
+        const response = await penjualanServices.fetchById(id)
         if (response.data.status === 'success') {
           this.isLoading = false
           this.record = response.data.data
-          const kodeAkun = this.record.kode_akun.split("-")
 
-          this.tipe = kodeAkun[0] + '-'
-          this.kodeAkun = kodeAkun[1]
-          this.namaAkun = this.record.nama_akun
-          this.akunUtama = this.record.induk ? { id: this.record.akun_utama, name: this.record.induk.nama_akun } : ''
-          this.tipeAkun = { id: this.record.tipe_akun_id, name: this.record.tipe_akun }
-          this.setaraKas = this.record.arus_kas ? { id: this.record.arus_kas, name: 'YA' } : { id: null, name: 'TIDAK' }
-          this.arusKasTipe = this.record.arus_kas_tipe ? { id: this.record.arus_kas_tipe, name: this.record.arus_kas_tipe_text } : ''
-          this.default = this.record.default ? { id: this.record.default, name: this.record.default_text } : ''
+          this.kodeJual = this.record.kode_jual
+          this.tanggal = this.record.tanggal
+          this.uraian = this.record.uraian
+          this.nominal = this.formatNumber(this.toFixed(this.record.nominal, 0))
+          this.akunPersediaan = { kode_akun: this.record.kode_akun_persediaan, nama_akun: this.record.nama_akun_persediaan }
+          this.akunPenerimaan = { kode_akun: this.record.kode_akun_penerimaan, nama_akun: this.record.nama_akun_penerimaan }
+          this.image = this.record.gambar
         } else {
           this.isLoading = false
 
@@ -492,21 +487,21 @@ export default {
     },     
     async save(){
       try {
-        this.isLoading = true       
-        const payload = {
-          kode_akun: this.tipe + '' + this.kodeAkun,
-          nama_akun: this.namaAkun,
-          akun_utama: this.akunUtama ? this.akunUtama.id : null,
-          tipe_akun: this.tipeAkun ? this.tipeAkun.name : null,
-          setara_kas: this.setaraKas ? this.setaraKas.id : null,
-          arus_kas_tipe: this.arusKasTipe ? this.arusKasTipe.id : null,
-          default: this.default ? this.default.id : null
-        }
+        this.isLoading = true
+        let payload = new FormData()
+        payload.append('tanggal', dayjs(this.tanggal).format('YYYY/MM/DD'))
+        payload.append('nominal', this.unformatNumber(this.nominal))
+        payload.append('uraian', this.uraian)
+        payload.append('kode_akun_persediaan', this.akunPersediaan ? this.akunPersediaan.kode_akun : null)
+        payload.append('kode_akun_penerimaan', this.akunPenerimaan ? this.akunPenerimaan.kode_akun : null)
+        payload.append('gambar', this.penjualanImage)
+
         let response = ''
         if (this.isEdit) {
-          response = await akunServices.update(this.akunId, payload)
+          payload.append('_method', 'PUT')
+          response = await penjualanServices.update(this.penjualanId, payload)
         } else {
-          response = await akunServices.create(payload)
+          response = await penjualanServices.create(payload)
         }
         
         if (response.data.status === 'success') {
@@ -516,12 +511,7 @@ export default {
           /* SET LOADING STATE IS FALSE */
           this.isLoading = false
 
-          if (this.akunId) {
-            this.showModal = false
-          }
-
-          /* CLEAR INPUT FORM */
-          this.clearForm()
+          this.showModal = false
 
           /* EMPTY ERRORS VARIABLE */
           this.error = []
@@ -530,7 +520,6 @@ export default {
           this.toast.success(response.data.message)
 
           /* RELOAD DATA */
-          this.fetchAkunUtama()
           this.fetchData()
         } else {
           /* SET LOADING STATE IS FALSE */
@@ -543,7 +532,7 @@ export default {
           let responseReturn = response.data.message
 
           /* IF RESPONSE HAS OBJECT, STORE RESPONSE TO ERRORS VARIABLE */
-          if (responseReturn.kode_akun || responseReturn.nama_akun || responseReturn.akun_utama || responseReturn.tipe_akun || responseReturn.default) {
+          if (responseReturn.tanggal || responseReturn.nominal || responseReturn.uraian || responseReturn.kode_akun_penerimaan || responseReturn.kode_akun_persediaan) {
               this.error = response.data.message
 
           /* ELSE, THROW ERROR MESSAGES */
@@ -559,15 +548,14 @@ export default {
         this.toast.error(error.message)        
       }
     },
-    clearForm(){
-      this.akunId = ''
-      this.kodeAkun = ''
-      this.namaAkun = ''
-      this.akunUtama = ''
-      this.tipeAkun = '' 
-      this.setaraKas = { id: null, name: 'TIDAK' }
-      this.arusKasTipe = ''
-      this.default = ''
+    clearHeader(){
+      this.kodeJual = !this.isEdit ? 'OTOMATIS' : ''
+      this.tanggal = new Date()
+      this.uraian = ''
+      this.nominal = ''
+      this.akunPersediaan = ''
+      this.akunPenerimaan = ''
+      this.image = ''
     },
     updateQueryString() {
       const search = this.search ? this.search.toLowerCase() : ''
@@ -618,6 +606,9 @@ export default {
         this.awaitingSearch = false
       }
     }, 1000),
+    nameWithId ({ nama_akun, kode_akun }) {
+      return `${kode_akun} — ${nama_akun}`
+    },    
     formatNumber(num) {
       let result = format.formatNumber(num)
       return result
@@ -637,40 +628,49 @@ export default {
       this.isEdit = false
       this.error = []
       this.showModal = true
-      this.modalTitle = 'Tambah Akun'
-      this.clearForm()
-      this.fetchAkunUtama()
-      this.$refs.kodeAkun.$el.focus()
+      this.modalTitle = 'Tambah Penjualan'
+      this.clearHeader()
     },
     toggleEdit(id) {
       this.isEdit = true
       this.error = []
       this.showModal = true
-      this.modalTitle = 'Edit Akun'
-      this.clearForm()
-      this.fetchAkunUtama()
-      this.akunId = id
+      this.modalTitle = 'Edit Penjualan'
+      this.clearHeader()
+      this.penjualanId = id
       this.fetchDataById(id)
     },
-    nameWithId ({ name, id }) {
-      return `${id} — ${name}`
+    onFileChange(e) {
+      let files = e.target.files || e.dataTransfer.files
+      if (!files.length) {
+        return
+      }
+
+      this.createImage(files[0])
+    },
+    createImage(file) {
+      let reader = new FileReader()
+      let vm = this
+
+      reader.onload = (e) => {
+        vm.image = e.target.result
+      }
+      reader.readAsDataURL(file)
+      this.penjualanImage = this.$refs.gambar.files[0]
+    },
+    removeImage() {
+      this.image = ''
     },
   },
   created() {
     this.fetchData()
+    this.fetchAkunOptions()
     document.addEventListener("keydown", this.searchFocus);
   },
   unmounted() {
     document.removeEventListener("keydown", this.searchFocus);
   },
   watch: {
-    tipeAkun: function() {
-      if (this.tipeAkun) {
-        this.tipe = this.tipeAkun.id
-      } else {
-        this.tipe = null
-      }
-    },
     '$route.query.take': {
       handler: function(take) {
         if (take) {
@@ -732,7 +732,7 @@ export default {
         const option = this.sortFields.filter(item => sort_field.includes(item.field))
         this.sortField = { field: option[0].field, name: option[0].name }          
         } catch (error) {
-          this.sortField = { field: 'id', name: 'ID (Bawaan)' }
+          this.sortField = { field: 'tanggal', name: 'Tanggal' }
         }
       },
       immediate: true

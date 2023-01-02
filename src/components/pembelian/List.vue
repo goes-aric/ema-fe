@@ -37,29 +37,36 @@
         <table>
           <thead>
             <tr>
-              <th scope="col" class="text-left">Kode Beli</th>
+              <th scope="col" class="text-left">No Transaksi</th>
               <th scope="col" class="text-left">Tanggal</th>
               <th scope="col" class="text-left">Metode Bayar</th>
-              <th scope="col" class="text-left">Uraian</th>
-              <th scope="col" class="text-left">Nominal</th>
+              <th scope="col" class="text-left">Supplier</th>
+              <th scope="col" class="text-center">Total</th>
+              <th scope="col" class="text-center">Diskon</th>
+              <th scope="col" class="text-center">Grand Total</th>
               <th scope="col" class="text-center">Aksi</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-if="pembelian.length == 0"><td class="text-center" colspan="6">Tidak ada data yang dapat ditampilkan</td></tr>
-            <tr v-else-if="totalFiltered == 0"><td class="text-center" colspan="6">Tidak ada catatan yang cocok ditemukan</td></tr>
+            <tr v-if="pembelian.length == 0"><td class="text-center" colspan="8">Tidak ada data yang dapat ditampilkan</td></tr>
+            <tr v-else-if="totalFiltered == 0"><td class="text-center" colspan="8">Tidak ada catatan yang cocok ditemukan</td></tr>
             <tr v-for="(item, index) in pembelian" :key="item.id">
-              <td class="text-left">{{ item.kode_beli }}</td>
+              <td class="text-left">{{ item.no_transaksi }}</td>
               <td class="text-left">{{ item.tanggal }}</td>
               <td class="text-left">{{ item.metode_bayar }}</td>
-              <td class="text-left">{{ item.uraian }}</td>
-              <td class="text-right">{{ formatNumber(toFixed(item.nominal, 0)) }}</td>
+              <td class="text-left">{{ item.supplier.nama_supplier }}</td>
+              <td class="text-right">{{ formatNumber(toFixed(item.total, 0)) }}</td>
+              <td class="text-right">{{ formatNumber(toFixed(item.diskon, 0)) }}</td>
+              <td class="text-right">{{ formatNumber(toFixed(item.grand_total, 0)) }}</td>
               <td class="text-center">
                 <div class="flex item-center justify-center">
-                  <button @click="toggleEdit( item.id )" type="button" class="btn-edit" alt="Edit" title="Edit">
-                    <IconEdit />
+                  <button @click="toggleShow( item.id )" type="button" class="btn-show" alt="Detail" title="Detail">
+                    <IconShow />
                   </button>                  
-                  <button @click="confirmDialog( item.id )" type="button" class="btn-delete" alt="Hapus" title="Hapus">
+                  <button @click="toggleEdit( item.id )" type="button" class="btn-edit" alt="Edit" title="Edit" :disabled="item.sumber">
+                    <IconEdit />
+                  </button>
+                  <button @click="confirmDialog( item.id )" type="button" class="btn-delete" alt="Hapus" title="Hapus" :disabled="item.sumber">
                     <IconTrash />
                   </button>
                 </div>
@@ -84,154 +91,245 @@
     </div>
 
     <!-- Modal Dialog -->
-    <modal :show="showModal" @close="showModal = false" addClass="modal-md" modalOrientation="pt-20 lg:pt-6">
+    <modal :show="showModal" @close="showModal = false" addClass="modal-xl" modalOrientation="py-20 lg:py-6">
       <template v-slot:header><h3>{{ modalTitle }}</h3></template>
       <template v-slot:body>
         <Form id="modalForm" @submit="saveConfirmDialog()">
-          <div class="flex w-full mb-2 gap-2">
-            <div class="md:w-2/5">
-              <label for="kode_beli" class="label-control md:py-3">Kode Beli <span class="text-red-600">*</span></label>
-            </div>
-            <div class="flex md:w-3/5">
-              <div class="w-1/2">
-                <Field id="kode_beli" name="kode_beli" v-model="kodeBeli" label="Kode Beli" type="text" rules="" class="form-control" disabled />
-                <ErrorMessage name="kode_beli" class="capitalize text-sm text-red-600" />
-                <div v-if="error.kode_beli" class="capitalize text-sm text-red-600"><span>{{ error.kode_beli[0] }}</span></div>                  
+          <div class="md:flex w-full gap-12 mb-2">
+            <div class="w-full md:w-2/5 mb-4">
+              <div class="flex w-full gap-2">
+                <div class="w-full md:w-2/5 mb-2">
+                  <label for="no_transaksi" class="label-control md:py-3">No Transaksi <span class="text-red-600">*</span></label>
+                </div>
+                <div class="w-full md:w-3/5 mb-2">
+                  <Field id="no_transaksi" name="no_transaksi" v-model="noTransaksi" label="No Transaksi" type="text" rules="" class="form-control" disabled />
+                  <ErrorMessage name="no_transaksi" class="capitalize text-sm text-red-600" />
+                  <div v-if="error.no_transaksi" class="capitalize text-sm text-red-600"><span>{{ error.no_transaksi[0] }}</span></div>
+                </div>
               </div>
-              <div class="w-1/2"></div>
-            </div>
-          </div>
-          <div class="flex w-full mb-2 gap-2">
-            <div class="md:w-2/5">
-              <label for="tanggal" class="label-control md:py-3">Tanggal <span class="text-red-600">*</span></label>
-            </div>
-            <div class="flex md:w-3/5">
-              <div class="w-1/2">
-                <v-date-picker v-model="tanggal" mode="date" :masks="masks" color="purple" title-position="left" :attributes="attrs">
-                  <template v-slot="{ inputValue, inputEvents }">
+              <div class="flex w-full gap-2">
+                <div class="w-full md:w-2/5 mb-2">
+                  <label for="tanggal" class="label-control md:py-3">Tanggal <span class="text-red-600">*</span></label>
+                </div>
+                <div class="w-full md:w-3/5 mb-2">
+                  <template v-if="isShow">
                     <div class="md:flex gap-6">
                       <div class="w-full">
                         <div class="relative flex justify-between items-center">
-                          <input id="tanggal" type="text" class="form-control" :value="inputValue" v-on="inputEvents">
+                          <input id="tanggal" type="text" class="form-control" :value="tanggal" readonly>
                           <span class="h-full absolute pointer-events-none right-0">
                             <IconDateRange class="m-3" />
                           </span>                      
                         </div>
-                        <div v-if="error.tanggal" class="capitalize text-sm text-red-600"><span>{{ error.tanggal[0] }}</span></div>
                       </div>
                     </div>
                   </template>
-                </v-date-picker>                  
+                  <template v-else>
+                    <v-date-picker v-model="tanggal" mode="date" :masks="masks" color="purple" title-position="left" :attributes="attrs">
+                      <template v-slot="{ inputValue, inputEvents }">
+                        <div class="md:flex gap-6">
+                          <div class="w-full">
+                            <div class="relative flex justify-between items-center">
+                              <input id="tanggal" type="text" class="form-control" :value="inputValue" v-on="inputEvents" readonly>
+                              <span class="h-full absolute pointer-events-none right-0">
+                                <IconDateRange class="m-3" />
+                              </span>                      
+                            </div>
+                            <div v-if="error.tanggal" class="capitalize text-sm text-red-600"><span>{{ error.tanggal[0] }}</span></div>
+                          </div>
+                        </div>
+                      </template>
+                    </v-date-picker>
+                  </template>
+                </div>                
               </div>
-              <div class="w-1/2"></div>
+              <div class="flex w-full gap-2">
+                <div class="w-full md:w-2/5 mb-2">
+                  <label for="no_transaksi" class="label-control md:py-3">Metode Bayar <span class="text-red-600">*</span></label>
+                </div>
+                <div class="w-full md:w-3/5 mb-2">
+                  <VueMultiselect id="metode_bayar" name="metode_bayar" ref="metode_bayar" v-model="metodeBayar" :options="metodeBayarOptions" :showLabels="false" placeholder="Pilih Metode Bayar">
+                    <template v-slot:caret>
+                      <div>
+                        <div class="multiselect__select">
+                          <span>
+                            <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
+                              <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
+                            </svg>
+                          </span>
+                        </div>
+                      </div>
+                    </template>
+                  </VueMultiselect>
+                  <ErrorMessage name="metode_bayar" class="capitalize text-sm text-red-600" />
+                  <div v-if="error.metode_bayar" class="capitalize text-sm text-red-600"><span>{{ error.metode_bayar[0] }}</span></div>
+                </div>
+              </div>              
             </div>
-          </div>
-          <div class="flex w-full mb-2 gap-2">
-            <div class="md:w-2/5">
-              <label for="metode_bayar" class="label-control md:py-3">Metode Bayar <span class="text-red-600">*</span></label>
-            </div>
-            <div class="md:w-3/5">
-              <VueMultiselect id="metode_bayar" name="metode_bayar" ref="metode_bayar" v-model="metodeBayar" :options="metodeBayarOptions" :showLabels="false" placeholder="Pilih Metode Bayar">
-                <template v-slot:caret>
-                  <div>
-                    <div class="multiselect__select">
-                      <span>
-                        <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                          <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </template>
-              </VueMultiselect>
-              <ErrorMessage name="metode_bayar" class="capitalize text-sm text-red-600" />
-              <div v-if="error.metode_bayar" class="capitalize text-sm text-red-600"><span>{{ error.metode_bayar[0] }}</span></div> 
-            </div>
-          </div>
-          <div class="flex w-full mb-2 gap-2">
-            <div class="md:w-2/5">
-              <label for="nominal" class="label-control md:py-3">Nominal <span class="text-red-600">*</span></label>
-            </div>
-            <div class="flex md:w-3/5">
-              <div class="w-1/2">
-                <Field id="nominal" name="nominal" v-model.lazy="nominal" v-number="number" label="Nominal" type="text" rules="" class="form-control" />
-                <ErrorMessage name="nominal" class="capitalize text-sm text-red-600" />
-                <div v-if="error.nominal" class="capitalize text-sm text-red-600"><span>{{ error.nominal[0] }}</span></div>                  
+            <div class="w-full md:w-3/5 mb-4">
+              <div class="flex w-full gap-2">
+                <div class="w-full md:w-1/4 mb-2">
+                  <label for="supplier" class="label-control md:py-3">Supplier <span class="text-red-600">*</span></label>
+                </div>
+                <div class="w-full md:w-3/4 mb-2">
+                  <VueMultiselect id="supplier" name="supplier" ref="supplier" v-model="supplier" :options="supplierOptions" :showLabels="false" label="nama_supplier" track-by="id" :custom-label="nameWithAddress" placeholder="Pilih Supplier">
+                    <template v-slot:caret>
+                      <div>
+                        <div class="multiselect__select">
+                          <span>
+                            <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
+                              <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
+                            </svg>
+                          </span>
+                        </div>
+                      </div>
+                    </template>
+                  </VueMultiselect>
+                  <ErrorMessage name="supplier" class="capitalize text-sm text-red-600" />
+                  <div v-if="error.supplier" class="capitalize text-sm text-red-600"><span>{{ error.supplier[0] }}</span></div>
+                </div>                
               </div>
-              <div class="w-1/2"></div>
-            </div>
-          </div>            
-          <div class="flex w-full mb-2 gap-2">
-            <div class="md:w-2/5">
-              <label for="uraian" class="label-control md:py-3">Uraian <span class="text-red-600">*</span></label>
-            </div>
-            <div class="md:w-3/5">
-              <Field id="uraian" name="uraian" v-model="uraian" label="Uraian" as="textarea" rules="required" rows="5" class="form-control" />
-              <ErrorMessage name="uraian" class="capitalize text-sm text-red-600" />
-              <div v-if="error.uraian" class="capitalize text-sm text-red-600"><span>{{ error.uraian[0] }}</span></div>
-            </div>
-          </div>
-          <div class="flex w-full mb-2 gap-2">
-            <div class="md:w-2/5">
-              <label for="kode_akun_persediaan" class="label-control md:py-3">Akun Debet <span class="text-red-600">*</span></label>
-            </div>
-            <div class="md:w-3/5">
-              <VueMultiselect id="kode_akun_persediaan" name="kode_akun_persediaan" ref="akunPersediaan" v-model="akunPersediaan" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun">
-                <template v-slot:caret>
-                  <div>
-                    <div class="multiselect__select">
-                      <span>
-                        <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                          <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                        </svg>
-                      </span>
-                    </div>
+              <div class="flex w-full gap-2">
+                <div class="w-full md:w-1/4 mb-2">
+                  <label for="gambar" class="label-control md:py-3">Bukti Transaksi<span class="text-red-600">*</span></label>
+                </div>
+                <div class="w-full md:w-3/4 mb-2">
+                  <div class="h-32 border border-dashed border-gray-400 items-center justify-center p-1 rounded-sm mb-2">
+                    <img class="h-full" :src="image" />
                   </div>
-                </template>
-              </VueMultiselect>
-              <ErrorMessage name="kode_akun_persediaan" class="capitalize text-sm text-red-600" />
-              <div v-if="error.kode_akun_persediaan" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun_persediaan[0] }}</span></div> 
-            </div>
-          </div>
-          <div class="flex w-full mb-2 gap-2">
-            <div class="md:w-2/5">
-              <label for="kode_akun_pembayaran" class="label-control md:py-3">Akun Kredit <span class="text-red-600">*</span></label>
-            </div>
-            <div class="md:w-3/5">
-              <VueMultiselect id="kode_akun_pembayaran" name="kode_akun_pembayaran" ref="akunPembayaran" v-model="akunPembayaran" :options="akunOptions" :showLabels="false" label="nama_akun" track-by="kode_akun" :custom-label="nameWithId" placeholder="Pilih Akun">
-                <template v-slot:caret>
-                  <div>
-                    <div class="multiselect__select">
-                      <span>
-                        <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
-                          <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
-                        </svg>
-                      </span>
-                    </div>
-                  </div>
-                </template>
-              </VueMultiselect>
-              <ErrorMessage name="kode_akun_pembayaran" class="capitalize text-sm text-red-600" />
-              <div v-if="error.kode_akun_pembayaran" class="capitalize text-sm text-red-600"><span>{{ error.kode_akun_pembayaran[0] }}</span></div> 
-            </div>
-          </div>
-          <div class="flex w-full mb-2 gap-2">
-            <div class="md:w-2/5">
-              <label for="gambar" class="label-control md:py-3">Bukti Transaksi <span class="text-red-600">*</span></label>
-            </div>
-            <div class="md:w-3/5">
-              <div class="md:h-32 border border-dashed border-gray-400 flex items-center justify-center p-1 rounded-sm mb-2">
-                <img class="h-full" :src="image" />
+                  <input v-if="!isShow" id="gambar" name="gambar" type="file" ref="gambar" @change="onFileChange" rules="image|ext:jpg,png" label="Gambar" />
+                  <ErrorMessage name="gambar" class="capitalize text-sm text-red-600" />
+                  <div v-if="error.gambar" class="capitalize text-sm text-red-600"><span>{{ error.gambar[0] }}</span></div>
+                </div>                
               </div>
-              <input id="gambar" name="gambar" type="file" ref="gambar" @change="onFileChange" rules="image|ext:jpg,png" label="Gambar" />
-              <ErrorMessage name="gambar" class="capitalize text-sm text-red-600" />
-              <div v-if="error.gambar" class="capitalize text-sm text-red-600"><span>{{ error.gambar[0] }}</span></div>              
+            </div>
+          </div>
+          <div class="w-full mb-4">
+            <div class="flex gap-2" v-if="!isShow">
+              <div class="w-full md:w-7/12 mb-2">
+                <label for="barang" class="label-control">Barang <span class="text-red-600">*</span></label>
+                <VueMultiselect id="barang" name="barang" ref="barang" v-model="barang" :options="barangOptions" :showLabels="false" label="nama_barang" track-by="id" :custom-label="nameWithId" placeholder="Pilih Barang">
+                  <template v-slot:caret>
+                    <div>
+                      <div class="multiselect__select">
+                        <span>
+                          <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
+                            <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
+                          </svg>
+                        </span>
+                      </div>
+                    </div>
+                  </template>
+                </VueMultiselect>
+                <ErrorMessage name="barang" class="capitalize text-sm text-red-600" />
+                <div v-if="error.barang" class="capitalize text-sm text-red-600"><span>{{ error.barang[0] }}</span></div>
+              </div>
+              <div class="w-2/5 md:w-2/12 mb-2">
+                <label for="satuan" class="label-control">Satuan<span class="text-red-600">*</span></label>
+                <Field id="satuan" name="satuan" v-model.lazy="satuan" label="Satuan" type="text" rules="" class="form-control" readonly />
+                <ErrorMessage name="satuan" class="capitalize text-sm text-red-600" />
+                <div v-if="error.satuan" class="capitalize text-sm text-red-600"><span>{{ error.satuan[0] }}</span></div>
+              </div>              
+              <div class="w-2/5 md:w-2/12 mb-2">
+                <label for="harga" class="label-control">Harga<span class="text-red-600">*</span></label>
+                <Field id="harga" name="harga" ref="harga" v-model.lazy="harga" v-number="number" label="Harga" type="text" rules="" @keyup="calculateTotal()" class="form-control text-right" />
+                <ErrorMessage name="harga" class="capitalize text-sm text-red-600" />
+                <div v-if="error.harga" class="capitalize text-sm text-red-600"><span>{{ error.harga[0] }}</span></div>
+              </div>
+              <div class="w-2/5 md:w-2/12 mb-2">
+                <label for="qty" class="label-control">Qty <span class="text-red-600">*</span></label>
+                <Field id="qty" name="qty" v-model.lazy="qty" v-number="number" label="Qty" type="text" rules="" @keyup="calculateTotal()" class="form-control text-right" />
+                <ErrorMessage name="qty" class="capitalize text-sm text-red-600" />
+                <div v-if="error.qty" class="capitalize text-sm text-red-600"><span>{{ error.qty[0] }}</span></div>                
+              </div>
+              <div class="w-2/5 md:w-2/12 mb-2">
+                <label for="total" class="label-control">Total <span class="text-red-600">*</span></label>
+                <Field id="total" name="total" v-model.lazy="total" v-number="number" label="Total" type="text" rules="" class="form-control text-right" readonly />
+                <ErrorMessage name="total" class="capitalize text-sm text-red-600" />
+                <div v-if="error.total" class="capitalize text-sm text-red-600"><span>{{ error.total[0] }}</span></div>                
+              </div>              
+              <div class="w-1/5 md:w-1/12 mb-2">
+                <button type="button" class="btn btn--success mt-6 flex" @click="addDetail()">
+                  <IconPlus />
+                </button>
+              </div>
+            </div>            
+            <table class="min-w-max w-full table-auto mb-4">
+              <thead>
+                <tr>
+                  <th scope="col" class="text-left">Kode</th>
+                  <th scope="col" class="text-left">Nama Barang</th>
+                  <th scope="col" class="text-center">Satuan</th>
+                  <th scope="col" class="text-center">Harga</th>
+                  <th scope="col" class="text-center">Qty</th>
+                  <th scope="col" class="text-center">Total</th>
+                  <th scope="col" class="px-3 text-center" v-if="!isShow">Aksi</th>
+                </tr>                                                         
+              </thead>
+              <tbody class="text-gray-600 font-light">
+                <tr v-if="transaksiDetail.length == 0" class="border-b"><td class="py-3 px-6 text-sm text-center" colspan="7">Tidak ada data yang dapat ditampilkan</td></tr>
+                <tr v-for="(item, index) in transaksiDetail" :key="index" class="border-b">
+                  <td class="text-left">{{ item.kode_barang }}</td>
+                  <td class="text-left">{{ item.nama_barang }}</td>
+                  <td class="text-left">{{ item.satuan }}</td>
+                  <td class="text-right">{{ formatNumber(toFixed(item.harga, 0)) }}</td>
+                  <td class="text-right">{{ formatNumber(toFixed(item.qty, 0)) }}</td>
+                  <td class="text-right">{{ formatNumber(toFixed(item.total, 0)) }}</td>
+                  <td class="px-3 text-center" v-if="!isShow">
+                    <div class="flex item-center justify-center">
+                      <button @click="removeDetail( index )" type="button" class="btn-delete" alt="Hapus">
+                        <IconTrash />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="flex gap-32">
+              <div class="w-1/2 md:w-1/2 mb-4">
+                <label for="catatan" class="label-control">Catatan<span class="text-red-600">*</span></label>
+                <Field id="catatan" name="catatan" v-model="catatan" label="Catatan" as="textarea" rows="4" rules="" class="form-control" />
+                <ErrorMessage name="catatan" class="capitalize text-sm text-red-600" />
+                <div v-if="error.catatan" class="capitalize text-sm text-red-600"><span>{{ error.catatan[0] }}</span></div>                
+              </div>
+              <div class="w-1/2 md:w-1/2 mb-4">
+                <div class="flex w-full gap-2">
+                  <div class="w-full md:w-2/5 mb-1">
+                    <label for="ssub_total" class="label-control md:py-3">Sub Total <span class="text-red-600">*</span></label>
+                  </div>
+                  <div class="w-full md:w-3/5 mb-1">
+                    <Field id="ssub_total" name="ssub_total" v-model="subTotal" label="Sub Total" type="text" rules="" class="form-control text-right" disabled />
+                    <ErrorMessage name="ssub_total" class="capitalize text-sm text-red-600" />
+                    <div v-if="error.ssub_total" class="capitalize text-sm text-red-600"><span>{{ error.ssub_total[0] }}</span></div>
+                  </div>
+                </div>
+                <div class="flex w-full gap-2">
+                  <div class="w-full md:w-2/5 mb-1">
+                    <label for="diskon" class="label-control md:py-3">Diskon <span class="text-red-600">*</span></label>
+                  </div>
+                  <div class="w-full md:w-3/5 mb-1">
+                    <Field id="diskon" name="diskon" v-model.lazy="diskon" v-number="number" label="Diskon" type="text" rules="" @keyup="calculateGrandTotal()" class="form-control text-right" />
+                    <ErrorMessage name="diskon" class="capitalize text-sm text-red-600" />
+                    <div v-if="error.diskon" class="capitalize text-sm text-red-600"><span>{{ error.diskon[0] }}</span></div>
+                  </div>
+                </div>
+                <div class="flex w-full gap-2">
+                  <div class="w-full md:w-2/5 mb-1">
+                    <label for="grand_total" class="label-control md:py-3">Grand Total <span class="text-red-600">*</span></label>
+                  </div>
+                  <div class="w-full md:w-3/5 mb-1">
+                    <Field id="grand_total" name="grand_total" v-model="grandTotal" label="Grand Total" type="text" rules="" class="form-control text-right" disabled />
+                    <ErrorMessage name="grand_total" class="capitalize text-sm text-red-600" />
+                    <div v-if="error.grand_total" class="capitalize text-sm text-red-600"><span>{{ error.grand_total[0] }}</span></div>
+                  </div>
+                </div>                                
+              </div>              
             </div>
           </div>
         </Form>     
       </template>
       <template v-slot:footer>
-        <button :disabled="isLoading" type="submit" form="modalForm" class="btn btn--success" alt="Simpan" title="Simpan">
+        <button v-if="!isShow" :disabled="isLoading" type="submit" form="modalForm" class="btn btn--success" alt="Simpan" title="Simpan">
           Simpan
         </button>
       </template> 
@@ -245,11 +343,13 @@ import { Field, Form, ErrorMessage } from "vee-validate"
 import { createToastInterface } from 'vue-toastification'
 import _ from 'lodash'
 import dayjs from 'dayjs'
-import akunServices from '@/services/akun/akunServices'
+import supplierServices from '@/services/supplier/supplierServices'
+import barangServices from '@/services/barang/barangServices'
 import pembelianServices from '@/services/pembelian/pembelianServices'
 import IconPlus from '../icons/IconPlus.vue'
 import IconTrash from '../icons/IconTrash.vue'
 import IconEdit from '../icons/IconEdit.vue'
+import IconShow from '../icons/IconShow.vue'
 import IconDateRange from '../icons/IconDateRange.vue'
 import Modal from '../widgets/Modal.vue'
 
@@ -262,6 +362,7 @@ export default {
     IconPlus,
     IconTrash,
     IconEdit,
+    IconShow,
     IconDateRange,
     Modal,
   },
@@ -312,8 +413,8 @@ export default {
       ],
       sortField: { field: 'id', name: 'ID (Bawaan)' },
       sortFields: [
+        { field: 'no_transaksi', name: 'No Transaksi' },
         { field: 'tanggal', name: 'Tanggal' },
-        { field: 'grand_total', name: 'Grand Total' },
         { field: 'updated_at', name: 'Diedit' },
         { field: 'id', name: 'ID (Bawaan)' }
       ],        
@@ -335,18 +436,27 @@ export default {
       modalTitle: '',     
       showModal: false,      
       isEdit: false,
+      isShow: false,
       pembelianId: '',
-      kodeBeli: '',
+      noTransaksi: '',
       tanggal: '',
       metodeBayar: '',
-      metodeBayarOptions: ['TUNAI', 'KREDIT'],
-      nominal: '',
-      uraian: '',    
-      akunPersediaan: '',
-      akunPembayaran: '',
-      akunOptions: [],
+      metodeBayarOptions: ['TUNAI', 'KREDIT'],      
+      supplier: '',
+      supplierOptions: [],
       image: '',
       pembelianImage: '',
+      barang: '',
+      barangOptions: [],
+      satuan: '',
+      harga: '',
+      qty: '',
+      total: '',
+      subTotal: 0,
+      diskon: 0,
+      grandTotal: 0,
+      catatan: '',
+      transaksiDetail: [],
       isLoading: false,
       number: {
         decimal: '.',
@@ -357,16 +467,17 @@ export default {
     }
   },
   methods: {
-    async fetchAkunOptions() {
+    async fetchSupplierOptions() {
       try {
-        const response = await akunServices.fetchDataOptions(null)
+        const response = await supplierServices.fetchDataOptions(null)
         if (response.data.status === 'success') {
           const records = response.data.data
-          this.akunOptions = []
+          this.supplierOptions = []
           records.forEach(element => {
-            this.akunOptions.push({
-              'kode_akun': element.kode_akun,
-              'nama_akun': element.nama_akun,
+            this.supplierOptions.push({
+              'id': element.id,
+              'nama_supplier': element.nama_supplier,
+              'alamat': element.alamat,
             })
           })          
         } else {
@@ -376,7 +487,48 @@ export default {
       } catch (error) {
         console.log(error.message)
       }
-    },    
+    },
+    async fetchBarangOptions() {
+      try {
+        const response = await barangServices.fetchDataOptions(null)
+        if (response.data.status === 'success') {
+          const records = response.data.data
+          this.barangOptions = []
+          records.forEach(element => {
+            this.barangOptions.push({
+              'id': element.id,
+              'kode_barang': element.kode_barang,
+              'nama_barang': element.nama_barang,
+              'satuan': element.satuan,
+              'harga_beli': element.harga_beli,              
+            })
+          })          
+        } else {
+          /* THROW ERROR MESSAGES */
+          this.toast.error(response.data.message)          
+        }
+      } catch (error) {
+        console.log(error.message)
+      }
+    },
+    async fetchInvoiceNumber(){
+      try {
+        this.isLoading = true
+        const response = await pembelianServices.fetchInvoiceNumber()
+        if (response.data.status === 'success') {
+          this.isLoading = false
+          this.noTransaksi = response.data.data
+        } else {
+          this.isLoading = false
+
+          /* THROW ERROR MESSAGES */
+          this.toast.error(response.data.message)            
+        }
+      } catch (error) {
+        this.isLoading = false
+        console.log(error.message)
+      }
+    },
     async fetchData() {
       try {
         this.isLoading = true
@@ -493,14 +645,27 @@ export default {
           this.isLoading = false
           this.record = response.data.data
 
-          this.kodeBeli = this.record.kode_beli
+          this.noTransaksi = this.record.no_transaksi
           this.tanggal = this.record.tanggal
           this.metodeBayar = this.record.metode_bayar
-          this.uraian = this.record.uraian
-          this.nominal = this.formatNumber(this.toFixed(this.record.nominal, 0))
-          this.akunPersediaan = { kode_akun: this.record.kode_akun_persediaan, nama_akun: this.record.nama_akun_persediaan }
-          this.akunPembayaran = { kode_akun: this.record.kode_akun_pembayaran, nama_akun: this.record.nama_akun_pembayaran }
+          this.supplier = { id: this.record.id_supplier, nama_supplier: this.record.supplier.nama_supplier, alamat: this.record.supplier.alamat }
           this.image = this.record.gambar
+          this.subTotal = this.formatNumber(this.record.total)
+          this.diskon = this.formatNumber(this.record.diskon)
+          this.grandTotal = this.formatNumber(this.record.grand_total)          
+          this.catatan = this.record.catatan
+
+          this.record.details.forEach(element => {
+            this.transaksiDetail.push({
+              id_barang: element.id_barang,
+              kode_barang: element.kode_barang,
+              nama_barang: element.nama_barang,
+              satuan: element.satuan,
+              harga: element.harga,
+              qty: element.qty,
+              total: element.total,
+            })
+          })
         } else {
           this.isLoading = false
 
@@ -511,18 +676,21 @@ export default {
         this.isLoading = false
         console.log(error.message)
       }
-    },     
+    },
     async save(){
       try {
         this.isLoading = true
         let payload = new FormData()
+        payload.append('no_transaksi', this.noTransaksi)
         payload.append('tanggal', dayjs(this.tanggal).format('YYYY/MM/DD'))
-        payload.append('metode_bayar', this.metodeBayar)
-        payload.append('nominal', this.unformatNumber(this.nominal))
-        payload.append('uraian', this.uraian)
-        payload.append('kode_akun_persediaan', this.akunPersediaan ? this.akunPersediaan.kode_akun : null)
-        payload.append('kode_akun_pembayaran', this.akunPembayaran ? this.akunPembayaran.kode_akun : null)
+        payload.append('metode_bayar', this.metodeBayar ? this.metodeBayar : '')
+        payload.append('supplier', this.supplier ? this.supplier.id : '')
+        payload.append('total', this.unformatNumber(this.subTotal))
+        payload.append('diskon', this.unformatNumber(this.diskon))
+        payload.append('grand_total', this.unformatNumber(this.grandTotal))
+        payload.append('catatan', this.catatan)
         payload.append('gambar', this.pembelianImage)
+        payload.append('details', JSON.stringify(this.transaksiDetail))
 
         let response = ''
         if (this.isEdit) {
@@ -535,6 +703,7 @@ export default {
         if (response.data.status === 'success') {
           /* SET IS EDIT STATE TO FALSE */
           this.isEdit = false
+          this.pembelianId = ''
 
           /* SET LOADING STATE IS FALSE */
           this.isLoading = false
@@ -560,7 +729,7 @@ export default {
           let responseReturn = response.data.message
 
           /* IF RESPONSE HAS OBJECT, STORE RESPONSE TO ERRORS VARIABLE */
-          if (responseReturn.tanggal || responseReturn.metode_bayar || responseReturn.nominal || responseReturn.uraian || responseReturn.kode_akun_pembayaran || responseReturn.kode_akun_persediaan) {
+          if (responseReturn.no_transaksi || responseReturn.tanggal || responseReturn.metode_bayar || responseReturn.supplier || responseReturn.catatan || responseReturn.gambar) {
               this.error = response.data.message
 
           /* ELSE, THROW ERROR MESSAGES */
@@ -577,14 +746,23 @@ export default {
       }
     },
     clearHeader(){
-      this.kodeBeli = !this.isEdit ? 'OTOMATIS' : ''
+      this.noTransaksi = ''
       this.tanggal = new Date()
       this.metodeBayar = ''
-      this.uraian = ''
-      this.nominal = ''
-      this.akunPersediaan = ''
-      this.akunPembayaran = ''
-      this.image = ''    
+      this.supplier = ''
+      this.transaksiDetail = []
+      this.subTotal = 0
+      this.diskon = 0
+      this.grandTotal = 0
+      this.image = ''
+      this.catatan = ''
+    },
+    clearForm(){
+      this.barang = ''
+      this.satuan = ''
+      this.harga = ''
+      this.qty = ''
+      this.total = ''
     },
     updateQueryString() {
       const search = this.search ? this.search.toLowerCase() : ''
@@ -635,9 +813,12 @@ export default {
         this.awaitingSearch = false
       }
     }, 1000),
-    nameWithId ({ nama_akun, kode_akun }) {
-      return `${kode_akun} — ${nama_akun}`
-    },    
+    nameWithId ({ nama_barang, kode_barang }) {
+      return `${kode_barang} — ${nama_barang}`
+    },
+    nameWithAddress ({ nama_supplier, alamat }) {
+      return `${nama_supplier} - ${alamat}`
+    },
     formatNumber(num) {
       let result = format.formatNumber(num)
       return result
@@ -654,20 +835,97 @@ export default {
       return format.onlyNumber()
     },
     toggleNew() {
+      this.isShow = false
       this.isEdit = false
       this.error = []
       this.showModal = true
       this.modalTitle = 'Tambah Pembelian'
       this.clearHeader()
+      this.clearForm()
+      this.fetchInvoiceNumber()
     },
     toggleEdit(id) {
+      this.isShow = false
       this.isEdit = true
       this.error = []
       this.showModal = true
       this.modalTitle = 'Edit Pembelian'
-      this.clearHeader()
+      this.clearHeader()    
+      this.clearForm()
       this.pembelianId = id
       this.fetchDataById(id)
+    },
+    toggleShow(id) {
+      this.isShow = true
+      this.isEdit = false
+      this.error = []
+      this.showModal = true
+      this.modalTitle = 'Detail Pembelian'
+      this.clearHeader()    
+      this.clearForm()
+      this.pembelianId = id
+      this.fetchDataById(id)
+    },    
+    addDetail() {
+      if (this.barang && this.harga && this.qty) {
+        const find = this.transaksiDetail.filter(data => data.kode_barang == this.barang.kode_barang)
+        const index = this.transaksiDetail.findIndex(data => data.kode_barang == this.barang.kode_barang)
+        if (find.length == 0) {
+          this.transaksiDetail.push({
+            id_barang: this.barang.id,
+            kode_barang: this.barang.kode_barang,
+            nama_barang: this.barang.nama_barang,
+            satuan: this.barang.satuan,
+            harga: this.unformatNumber(this.harga),
+            qty: this.unformatNumber(this.qty),
+            total: this.unformatNumber(this.total)
+          })
+
+          /* TOTAL */
+          let tempTotal = this.total ? parseFloat(this.unformatNumber(this.total)) : 0
+          let subTotal = this.subTotal ? parseFloat(this.unformatNumber(this.subTotal)) : 0
+          let tempSubTotal = tempTotal + subTotal
+          this.subTotal = this.formatNumber(this.toFixed(tempSubTotal, 0))
+
+          /* GRAND TOTAL */
+          let tempDiskon = this.diskon ? parseFloat(this.unformatNumber(this.diskon)) : 0
+          let tempGrandTotal = tempSubTotal - tempDiskon
+          this.grandTotal = this.formatNumber(this.toFixed(tempGrandTotal, 0))          
+
+          this.clearForm()
+        } else {
+          const price = this.unformatNumber(this.transaksiDetail[index].harga)
+          const qty = this.unformatNumber(this.transaksiDetail[index].qty)
+          const addQty = this.unformatNumber(this.qty)
+          const newQty = parseFloat(qty) + parseFloat(addQty)
+          const newTotal = parseFloat(price) * parseFloat(newQty)
+
+          this.transaksiDetail[index].qty = newQty
+          this.transaksiDetail[index].total = newTotal
+
+          /* TOTAL */
+          let tempTotal = this.total ? parseFloat(this.unformatNumber(this.total)) : 0
+          let subTotal = this.subTotal ? parseFloat(this.unformatNumber(this.subTotal)) : 0
+          let tempSubTotal = tempTotal + subTotal
+          this.subTotal = this.formatNumber(this.toFixed(tempSubTotal, 0))
+
+          /* GRAND TOTAL */
+          let tempDiskon = this.diskon ? parseFloat(this.unformatNumber(this.diskon)) : 0
+          let tempGrandTotal = tempSubTotal - tempDiskon
+          this.grandTotal = this.formatNumber(this.toFixed(tempGrandTotal, 0))
+
+          this.clearForm()
+        }
+      } else {
+        this.toast.error('Silakan lengkapi masukan data terlebih dahulu!')
+      }
+    },
+    removeDetail(index) {
+      let item = this.transaksiDetail[index]
+      this.subTotal = this.unformatNumber(this.subTotal) - item.total
+      this.grandTotal = this.unformatNumber(this.grandTotal) - item.total
+
+      this.transaksiDetail.splice(index, 1)
     },
     onFileChange(e) {
       let files = e.target.files || e.dataTransfer.files
@@ -690,16 +948,36 @@ export default {
     removeImage() {
       this.image = ''
     },
+    calculateTotal() {
+      const harga = this.unformatNumber(this.harga)
+      const qty = this.unformatNumber(this.qty)
+      const total = harga * qty
+
+      this.total = this.formatNumber(this.toFixed(total, 0))
+    },
+    calculateGrandTotal() {
+      const subTotal = this.unformatNumber(this.subTotal)
+      const diskon = this.unformatNumber(this.diskon)
+      const grandTotal = subTotal - diskon
+
+      this.grandTotal = this.formatNumber(this.toFixed(grandTotal, 0))
+    }
   },
   created() {
     this.fetchData()
-    this.fetchAkunOptions()
+    this.fetchSupplierOptions()
+    this.fetchBarangOptions()
     document.addEventListener("keydown", this.searchFocus);
   },
   unmounted() {
     document.removeEventListener("keydown", this.searchFocus);
   },
   watch: {
+    barang: function() {
+      this.satuan = this.barang ? this.barang.satuan : ''
+      this.harga = this.barang ? this.barang.harga_beli : ''
+      this.$refs.harga.$el.focus()
+    },
     '$route.query.take': {
       handler: function(take) {
         if (take) {
@@ -761,7 +1039,7 @@ export default {
         const option = this.sortFields.filter(item => sort_field.includes(item.field))
         this.sortField = { field: option[0].field, name: option[0].name }          
         } catch (error) {
-          this.sortField = { field: 'tanggal', name: 'Tanggal' }
+          this.sortField = { field: 'tanggal', name: 'Tanggal Transaksi' }
         }
       },
       immediate: true
