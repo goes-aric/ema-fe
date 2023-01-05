@@ -22,4 +22,7 @@ export default {
   deleteMultiple(payload){
     return axios.delete(`/jurnal`, payload)
   },
+  fetchJournalNumber(){
+    return axios.get(`/jurnal/number`)
+  }  
 }

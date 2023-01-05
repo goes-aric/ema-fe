@@ -24,5 +24,8 @@ export default {
   },
   charts(){
     return axios.get(`/penjualan/charts`)
-  },   
+  },
+  fetchInvoiceNumber(){
+    return axios.get(`/penjualan/invoice`)
+  }  
 }

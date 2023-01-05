@@ -17,8 +17,8 @@
           </div>
           <div class="block text-center mb-4">
             <h2 class="font-medium uppercase">Laporan Neraca</h2>
-            <h2 class="text-sm">Periode</h2>
-            <span class="text-sm font-medium">{{ formatedDate(tanggalAwal) }} s/d {{ formatedDate(tanggalAkhir) }}</span>
+            <h2 class="text-sm">Per Tanggal</h2>
+            <span class="text-sm font-medium">{{ formatedDate(tanggal) }}</span>
           </div>
           <div class="flex border">
             <div class="w-1/2 p-4 border-r">
@@ -151,8 +151,7 @@ export default {
   },  
   data() {
     return {
-      tanggalAwal: '',
-      tanggalAkhir: '',
+      tanggal: '',
       awaitingSearch: false,
       dataAktiva: [],
       totalAktiva: 0,
@@ -195,8 +194,7 @@ export default {
         this.isLoading = true
 
         const params = {
-          start: dayjs(props.tanggal_awal).format("YYYY/MM/DD"),
-          end: dayjs(props.tanggal_akhir).format("YYYY/MM/DD"),
+          start: dayjs(props.tanggal).format("YYYY/MM/DD"),
           tipe: 'AKTIVA'
         }        
         const response = await neracaServices.fetchDataAccTransaction(params)
@@ -246,8 +244,7 @@ export default {
         this.isLoading = true
 
         const params = {
-          start: dayjs(props.tanggal_awal).format("YYYY/MM/DD"),
-          end: dayjs(props.tanggal_akhir).format("YYYY/MM/DD"),
+          start: dayjs(props.tanggal).format("YYYY/MM/DD"),
           tipe: 'KEWAJIBAN'
         }
         const response = await neracaServices.fetchDataAccTransaction(params)
@@ -297,8 +294,7 @@ export default {
         this.isLoading = true
 
         const params = {
-          start: dayjs(props.tanggal_awal).format("YYYY/MM/DD"),
-          end: dayjs(props.tanggal_akhir).format("YYYY/MM/DD"),
+          start: dayjs(props.tanggal).format("YYYY/MM/DD"),
           tipe: 'EKUITAS'
         }        
         const response = await neracaServices.fetchDataAccTransaction(params)
@@ -362,8 +358,7 @@ export default {
       this.error = []
       this.clearData()
       this.showModal = true
-      this.tanggalAwal = props.tanggal_awal
-      this.tanggalAkhir = props.tanggal_akhir
+      this.tanggal = props.tanggal
       this.modalTitle = 'Laporan Neraca'
       this.fetchDataAktiva(props)
       this.fetchDataKewajiban(props)

@@ -20,6 +20,18 @@
               <IconBook />
               <span class="ml-2 relative">Akun</span>
             </router-link>
+          </li>          
+          <li v-if="userData.hak_akses == 'Admin'" @click="toggleSidebar">
+            <router-link :to="{ name: 'barang' }" class="nav-item">
+              <IconItem />
+              <span class="ml-2 relative">Barang</span>
+            </router-link>
+          </li>
+          <li v-if="userData.hak_akses == 'Admin'" @click="toggleSidebar">
+            <router-link :to="{ name: 'supplier' }" class="nav-item">
+              <IconSupplier />
+              <span class="ml-2 relative">Supplier</span>
+            </router-link>
           </li>
           <li v-if="userData.hak_akses == 'Admin'" @click="toggleSidebar">
             <router-link :to="{ name: 'pembelian' }" class="nav-item">
@@ -71,6 +83,8 @@ import IconKeyboard from '../../icons/IconKeyboard.vue'
 import IconPoll from '../../icons/IconPoll.vue'
 import IconAssignment from '../../icons/IconAssignment.vue'
 import IconCard from '../../icons/IconCard.vue'
+import IconItem from '../../icons/IconItem.vue'
+import IconSupplier from '../../icons/IconSupplier.vue'
 
 export default {
   name: 'SidebarNav',
@@ -103,7 +117,9 @@ export default {
     IconKeyboard,
     IconPoll,
     IconAssignment,
-    IconCard
+    IconCard,
+    IconItem,
+    IconSupplier
 },  
   methods: {
     toggleSidebar(){

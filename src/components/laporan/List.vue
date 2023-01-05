@@ -134,29 +134,21 @@
       <div class="w-1/2 p-6 rounded-sm bg-white shadow-lg">
         <h1 class="text-center mb-2">Laporan Neraca</h1>
         <div class="flex items-center gap-4">
-          <v-date-picker ref="calendar" v-model="neracaFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
-            <template v-slot="{ inputValue, inputEvents, isDragging }">
-              <div class="flex gap-2">
-                <div class="w-1/2 mb-4">
+          <v-date-picker v-model="neracaFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :attributes="attrs">
+            <template v-slot="{ inputValue, inputEvents }">
+              <div class="md:flex gap-6">
+                <div class="w-full">
                   <div class="relative flex justify-between items-center">
-                    <input id="startDate" ref="startDate" type="text" class="form-control" :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.start" v-on="inputEvents.start" autofocus readonly>
-                    <span class="h-full absolute pointer-events-none right-0">
-                      <IconDateRange class="m-3" />
-                    </span>
-                  </div>
-                </div>
-                <div class="w-1/2 mb-4">
-                  <div class="relative flex justify-between items-center">
-                    <input id="endDate" ref="endDate" type="text" class="form-control" :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.end" v-on="inputEvents.end" readonly>
+                    <input id="endDate" type="text" class="form-control" :value="inputValue" v-on="inputEvents" readonly>
                     <span class="h-full absolute pointer-events-none right-0">
                       <IconDateRange class="m-3" />
                     </span>                      
                   </div>
-                </div>                  
+                </div>
               </div>
             </template>
           </v-date-picker>
-          <div class="flex -mt-4 gap-2">
+          <div class="flex gap-2">
             <button type="button" class="btn btn--success" @click="toggleLaporanNeraca()">Tampilkan</button>
           </div>
         </div>
@@ -297,10 +289,7 @@ export default {
         start: '',
         end: ''
       },
-      neracaFilterDate: {
-        start: '',
-        end: ''
-      },
+      neracaFilterDate: '',
       labaRugiFilterDate: {
         start: '',
         end: ''
@@ -373,13 +362,12 @@ export default {
       }
     },
     toggleLaporanNeraca() {
-      if (this.neracaFilterDate.start == '' && this.neracaFilterDate.end == '') {
+      if (this.neracaFilterDate == '') {
           /* THROW ERROR MESSAGES */
-          this.toast.error('Silakan masukan tanggal awal dan akhir laporan yang ingin ditampilkan!')         
+          this.toast.error('Silakan masukan tanggal laporan yang ingin ditampilkan!')         
       } else {
         const params = {
-          tanggal_awal: this.neracaFilterDate ? this.neracaFilterDate.start : null,
-          tanggal_akhir: this.neracaFilterDate ? this.neracaFilterDate.end : null,
+          tanggal: this.neracaFilterDate ? this.neracaFilterDate : null,
         }
         this.$refs.laporanNeraca.toggleModal(params)
       }
