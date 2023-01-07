@@ -33,7 +33,7 @@
                 </template>
                 <div class="flex font-medium pb-2">
                   <div class="w-1/2">Jumlah {{ akun.nama_akun }}</div>
-                  <div class="w-1/2 border-t text-right">{{ formatNumber(toFixed(akun.total, 0)) }}</div>
+                  <div class="w-1/2 border-t text-right">{{ akun.total < 0 ? '(' + formatNumber(toFixed(akun.total, 0)) + ')' : formatNumber(toFixed(akun.total, 0)) }}</div>
                 </div>
               </div>
             </div>
@@ -49,7 +49,7 @@
                 </template>
                 <div class="flex font-medium pb-2">
                   <div class="w-1/2">Jumlah {{ akun.nama_akun }}</div>
-                  <div class="w-1/2 border-t text-right">{{ formatNumber(toFixed(akun.total, 0)) }}</div>
+                  <div class="w-1/2 border-t text-right">{{ akun.total < 0 ? '(' + formatNumber(toFixed(akun.total, 0)) + ')' : formatNumber(toFixed(akun.total, 0)) }}</div>
                 </div>                
               </div>
               <div v-for="akun in dataEkuitas" :key="akun.kode_akun" class="text-sm">
@@ -62,7 +62,7 @@
                 </template>
                 <div class="flex font-medium pb-2">
                   <div class="w-1/2">Jumlah {{ akun.nama_akun }}</div>
-                  <div class="w-1/2 border-t text-right">{{ formatNumber(toFixed(akun.total, 0)) }}</div>
+                  <div class="w-1/2 border-t text-right">{{ akun.total < 0 ? '(' + formatNumber(toFixed(akun.total, 0)) + ')' : formatNumber(toFixed(akun.total, 0)) }}</div>
                 </div>                
               </div>              
             </div>
@@ -71,13 +71,13 @@
             <div class="w-1/2 p-4 border-r">
               <div class="flex">
                 <div class="w-1/2">Total Nilai Aktiva</div>
-                <div class="w-1/2 text-right">{{ formatNumber(toFixed(this.totalAktiva, 0)) }}</div>
+                <div class="w-1/2 text-right">{{ this.totalAktiva < 0 ? '(' + formatNumber(toFixed(this.totalAktiva, 0)) + ')' : formatNumber(toFixed(this.totalAktiva, 0)) }}</div>
               </div>
             </div>
             <div class="w-1/2 p-4 border-r">
               <div class="flex">
                 <div class="w-1/2">Total Nilai Kewajiban + Ekuitas</div>
-                <div class="w-1/2 text-right">{{ formatNumber(toFixed((this.totalKewajiban + this.totalEkuitas), 0)) }}</div>
+                <div class="w-1/2 text-right">{{ (this.totalKewajiban + this.totalEkuitas) < 0 ? '(' + formatNumber(toFixed((this.totalKewajiban + this.totalEkuitas), 0)) + ')' : formatNumber(toFixed((this.totalKewajiban + this.totalEkuitas), 0)) }}</div>
               </div>              
             </div>
           </div>
@@ -265,7 +265,7 @@ export default {
                 transaksi[index].debet = parseFloat(transaksi[index].debet) + parseFloat(item.debet)
                 transaksi[index].kredit = parseFloat(transaksi[index].kredit) + parseFloat(item.kredit)
               }             
-              totalItem += (parseFloat(item.debet) - parseFloat(item.kredit))
+              totalItem += (parseFloat(item.kredit) - parseFloat(item.debet))
             })
             this.dataKewajiban.push({
               kode_akun: akun.kode_akun,
@@ -315,7 +315,7 @@ export default {
                 transaksi[index].debet = parseFloat(transaksi[index].debet) + parseFloat(item.debet)
                 transaksi[index].kredit = parseFloat(transaksi[index].kredit) + parseFloat(item.kredit)
               }             
-              totalItem += (parseFloat(item.debet) - parseFloat(item.kredit))
+              totalItem += (parseFloat(item.kredit) - parseFloat(item.debet))
             })
             this.dataEkuitas.push({
               kode_akun: akun.kode_akun,

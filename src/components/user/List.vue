@@ -300,6 +300,24 @@ export default {
     }
   },
   methods: {
+    async fetchNumber(){
+      try {
+        this.isLoading = true
+        const response = await userServices.fetchNumber()
+        if (response.data.status === 'success') {
+          this.isLoading = false
+          this.kodeUser = response.data.data
+        } else {
+          this.isLoading = false
+
+          /* THROW ERROR MESSAGES */
+          this.toast.error(response.data.message)            
+        }
+      } catch (error) {
+        this.isLoading = false
+        console.log(error.message)
+      }
+    },    
     async fetchData() {
       try {
         this.isLoading = true
@@ -345,6 +363,7 @@ export default {
       this.modalTitle = 'Tambah User'
       this.clearForm()
       this.$refs.namaUser.$el.focus()
+      this.fetchNumber()
     },
     toggleEdit(id) {
       this.isEdit = true
@@ -451,6 +470,7 @@ export default {
       try {
         this.isLoading = true       
         const payload = {
+          kode_user: this.kodeUser,
           nama: this.namaUser,
           alamat: this.alamat,
           hak_akses: this.hakAkses,
@@ -495,7 +515,7 @@ export default {
           let responseReturn = response.data.message
 
           /* IF RESPONSE HAS OBJECT, STORE RESPONSE TO ERRORS VARIABLE */
-          if (responseReturn.nama || responseReturn.alamat || responseReturn.hak_akses || responseReturn.no_telp || responseReturn.email || responseReturn.username || responseReturn.password) {
+          if (responseReturn.kode_user || responseReturn.nama || responseReturn.alamat || responseReturn.hak_akses || responseReturn.no_telp || responseReturn.email || responseReturn.username || responseReturn.password) {
               this.error = response.data.message
 
           /* ELSE, THROW ERROR MESSAGES */
@@ -513,7 +533,7 @@ export default {
     },
     clearForm(){
       this.userId = ''
-      this.kodeUser = !this.isEdit ? 'OTOMATIS' : ''
+      this.kodeUser = ''
       this.namaUser = ''
       this.alamat = ''
       this.hakAkses = ''

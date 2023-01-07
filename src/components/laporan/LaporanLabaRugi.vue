@@ -32,7 +32,7 @@
                 </template>
                 <div class="flex font-medium pb-2">
                   <div class="w-1/2">Jumlah {{ akun.nama_akun }}</div>
-                  <div class="w-1/2 border-t text-right">{{ formatNumber(toFixed(akun.total, 0)) }}</div>
+                  <div class="w-1/2 border-t text-right">{{ akun.total < 0 ? '(' + formatNumber(toFixed(akun.total, 0)) + ')' : formatNumber(toFixed(akun.total, 0)) }}</div>
                 </div>
               </div>
             </div>
@@ -47,7 +47,7 @@
                 </template>
                 <div class="flex font-medium pb-2">
                   <div class="w-1/2">Jumlah {{ akun.nama_akun }}</div>
-                  <div class="w-1/2 border-t text-right">{{ formatNumber(toFixed(akun.total, 0)) }}</div>
+                  <div class="w-1/2 border-t text-right">{{ akun.total < 0 ? '(' + formatNumber(toFixed(akun.total, 0)) + ')' : formatNumber(toFixed(akun.total, 0)) }}</div>
                 </div>                
               </div>          
             </div>
@@ -55,7 +55,7 @@
           <div class="border text-sm font-semibold">
             <div class="w-full p-4 border-r">
               <div class="flex">
-                <div class="w-1/2">Laba/Rugi Usaha</div>
+                <div class="w-1/2">{{ calculateLabaRugi() > 0 ? 'Laba' : 'Rugi' }} Usaha</div>
                 <div class="w-1/2 text-right">{{ calculateLabaRugi() > 0 ? formatNumber(toFixed(calculateLabaRugi(), 0)) : '('+formatNumber(toFixed(calculateLabaRugi(), 0))+')' }}</div>
               </div>
             </div>

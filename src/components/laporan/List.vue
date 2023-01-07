@@ -9,6 +9,21 @@
     <div class="flex w-full mb-4 gap-4">
       <div class="w-1/2 p-6 rounded-sm bg-white shadow-lg">
         <h1 class="text-center mb-2">Laporan Pembelian</h1>
+        <div class="w-full mb-2">
+          <VueMultiselect id="pembelian" name="pembelian" ref="pembelian" v-model="pembelian" :options="pembelianOptions" track-by="id" label="name" :showLabels="false" placeholder="Pilih Jenis Laporan">
+            <template v-slot:caret>
+              <div>
+                <div class="multiselect__select">
+                  <span>
+                    <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
+                      <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </template>
+          </VueMultiselect>
+        </div>
         <div class="flex items-center gap-4">
           <v-date-picker ref="calendar" v-model="pembelianFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
             <template v-slot="{ inputValue, inputEvents, isDragging }">
@@ -39,6 +54,21 @@
       </div>
       <div class="w-1/2 p-6 rounded-sm bg-white shadow-lg">   
         <h1 class="text-center mb-2">Laporan Penjualan</h1>
+        <div class="w-full mb-2">
+          <VueMultiselect id="penjualan" name="penjualan" ref="penjualan" v-model="penjualan" :options="penjualanOptions" track-by="id" label="name" :showLabels="false" placeholder="Pilih Jenis Laporan">
+            <template v-slot:caret>
+              <div>
+                <div class="multiselect__select">
+                  <span>
+                    <svg class="text-gray-500 my-2 ml-1 w-5 h-5 fill-current" viewBox="0 0 24 24">
+                      <path d="M16.59 8.29504L12 12.875L7.41 8.29504L6 9.70504L12 15.705L18 9.70504L16.59 8.29504Z"/>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </template>
+          </VueMultiselect>
+        </div>        
         <div class="flex items-center gap-4">
           <v-date-picker ref="calendar" v-model="penjualanFilterDate" mode="date" :masks="masks" color="purple" title-position="left" :popover="{ visibility: 'click' }" :attributes="attrs" is-range>
             <template v-slot="{ inputValue, inputEvents, isDragging }">
@@ -277,10 +307,21 @@ export default {
   },  
   data() {
     return {
+      pembelian: '',
+      pembelianOptions: [
+        { id: 'rekapitulasi', name: 'Rekapitulasi Pembelian' },
+        { id: 'item', name: 'Item Pembelian' }
+      ],      
       pembelianFilterDate: {
         start: '',
         end: ''
       },
+      penjualan: '',
+      penjualanOptions: [
+        { id: 'rekapitulasi', name: 'Rekapitulasi Penjualan' },
+        { id: 'item', name: 'Item Penjualan' },
+        { id: 'grafik', name: 'Penjualan Teratas' }
+      ],          
       penjualanFilterDate: {
         start: '',
         end: ''
@@ -326,11 +367,16 @@ export default {
   },
   methods: {
     toggleLaporanPembelian() {
-      if (this.pembelianFilterDate.start == '' && this.pembelianFilterDate.end == '') {
+      if (this.pembelian == '') {
+        /* THROW ERROR MESSAGES */
+        this.toast.error('Silakan masukan jenis laporan yang ingin ditampilkan!')
+        this.$refs.pembelian.$el.focus()
+      } else if (this.pembelianFilterDate.start == '' && this.pembelianFilterDate.end == '') {
           /* THROW ERROR MESSAGES */
-          this.toast.error('Silakan masukan tanggal awal dan akhir laporan yang ingin ditampilkan!')         
+          this.toast.error('Silakan masukan tanggal awal dan akhir laporan yang ingin ditampilkan!')
       } else {
         const params = {
+          jenis: this.pembelian.id,
           tanggal_awal: this.pembelianFilterDate ? this.pembelianFilterDate.start : null,
           tanggal_akhir: this.pembelianFilterDate ? this.pembelianFilterDate.end : null,
         }
@@ -338,11 +384,16 @@ export default {
       }
     },
     toggleLaporanPenjualan() {
-      if (this.penjualanFilterDate.start == '' && this.penjualanFilterDate.end == '') {
+      if (this.penjualan == '') {
+        /* THROW ERROR MESSAGES */
+        this.toast.error('Silakan masukan jenis laporan yang ingin ditampilkan!')
+        this.$refs.penjualan.$el.focus()
+      } else if (this.penjualanFilterDate.start == '' && this.penjualanFilterDate.end == '') {
           /* THROW ERROR MESSAGES */
-          this.toast.error('Silakan masukan tanggal awal dan akhir laporan yang ingin ditampilkan!')         
+          this.toast.error('Silakan masukan tanggal awal dan akhir laporan yang ingin ditampilkan!')
       } else {
         const params = {
+          jenis: this.penjualan.id,
           tanggal_awal: this.penjualanFilterDate ? this.penjualanFilterDate.start : null,
           tanggal_akhir: this.penjualanFilterDate ? this.penjualanFilterDate.end : null,
         }

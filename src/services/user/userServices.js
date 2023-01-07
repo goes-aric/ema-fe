@@ -30,5 +30,8 @@ export default {
   },
   fetchDataOptions(params){
     return axios.get(`/users/options`, {params})
+  },
+  fetchNumber(){
+    return axios.get(`/users/number`)
   }  
 }
