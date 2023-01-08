@@ -57,14 +57,26 @@
               <td class="text-left">{{ user.no_telp }}</td>
               <td class="text-left">{{ user.hak_akses }}</td>
               <td class="text-center">
-                <div class="flex justify-center">
-                  <button @click="toggleEdit( user.id )" type="button" class="btn-edit" alt="Edit" title="Edit">
-                    <IconEdit />
-                  </button>                  
-                  <button @click="confirmDialog( user.id )" type="button" class="btn-delete" alt="Delete">
-                    <IconTrash />
-                  </button>
-                </div>
+                <template v-if="userData.hak_akses == 'Keuangan'">
+                  <div v-if="user.hak_akses == 'Keuangan'" class="flex justify-center">
+                    <button @click="toggleEdit( user.id )" type="button" class="btn-edit" alt="Edit" title="Edit">
+                      <IconEdit />
+                    </button>                  
+                    <button @click="confirmDialog( user.id )" type="button" class="btn-delete" alt="Delete">
+                      <IconTrash />
+                    </button>
+                  </div>                
+                </template>
+                <template v-else>
+                  <div class="flex justify-center">
+                    <button @click="toggleEdit( user.id )" type="button" class="btn-edit" alt="Edit" title="Edit">
+                      <IconEdit />
+                    </button>                  
+                    <button @click="confirmDialog( user.id )" type="button" class="btn-delete" alt="Delete">
+                      <IconTrash />
+                    </button>
+                  </div>
+                </template>
               </td>
             </tr>          
           </tbody>                              
@@ -186,6 +198,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { Field, Form, ErrorMessage } from "vee-validate"
 import userServices from '@/services/user/userServices'
 import { createToastInterface } from 'vue-toastification'
@@ -688,6 +701,11 @@ export default {
       },
       immediate: true
     }                   
-  }
+  },
+  computed: {
+    ...mapGetters({
+      userData: 'user'
+    })
+  }  
 }
 </script>

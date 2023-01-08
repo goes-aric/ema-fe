@@ -8,7 +8,7 @@
             <span class="ml-2 relative">Dashboard</span>
           </router-link>
         </span>
-        <span v-if="userData.hak_akses == 'Admin'" @click="toggleSidebar">
+        <span v-if="userData.hak_akses == 'Admin' || userData.hak_akses == 'Keuangan'" @click="toggleSidebar">
           <router-link :to="{ name: 'user' }" class="nav-item">
             <IconUser />
             <span class="ml-2 relative">User</span>
